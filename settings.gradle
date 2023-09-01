@@ -1,3 +1,4 @@
 rootProject.name = 'HRManagement'
 include 'auth-micro-service'
+include 'user-micro-service'
 
