@@ -17,6 +17,7 @@ ext {
             lombok                      : "org.projectlombok:lombok:$versions.lombok",
             mapstruct                   : "org.mapstruct:mapstruct:$versions.mapstruct",
             mapstructProcessor          : "org.mapstruct:mapstruct-processor:$versions.mapstruct",
-            openapi                     : "org.springdoc:springdoc-openapi-ui:$versions.openapi"
+            openapi                     : "org.springdoc:springdoc-openapi-ui:$versions.openapi",
+            springBootDataMongodb      : "org.springframework.boot:spring-boot-starter-data-mongodb:$versions.springBoot"
     ]
 }
