@@ -5,5 +5,16 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     username: postgres
-    password: tmtmtm13
+
+    password: 1234
     url: jdbc:postgresql://localhost:5432/HRManagementDB
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: java8
+    password: root
+
