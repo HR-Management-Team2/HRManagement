@@ -5,6 +5,7 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     username: postgres
+
     password: 1234
     url: jdbc:postgresql://localhost:5432/HRManagementDB
   jpa:
@@ -16,3 +17,4 @@ spring:
     port: 5672
     username: java8
     password: root
+
