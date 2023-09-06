@@ -1,9 +1,6 @@
 package com.hrmanagement.service;
 
-import com.hrmanagement.dto.request.ActivateRequestDto;
-import com.hrmanagement.dto.request.AuthUpdateRequestDto;
-import com.hrmanagement.dto.request.LoginRequestDto;
-import com.hrmanagement.dto.request.RegisterRequestDto;
+import com.hrmanagement.dto.request.*;
 import com.hrmanagement.dto.response.RegisterResponseDto;
 import com.hrmanagement.exception.AuthManagerException;
 import com.hrmanagement.exception.ErrorType;
@@ -11,6 +8,7 @@ import com.hrmanagement.mapper.IAuthMapper;
 import com.hrmanagement.rabbitmq.producer.UserRegisterProducer;
 import com.hrmanagement.repository.IAuthRepository;
 import com.hrmanagement.repository.entity.Auth;
+import com.hrmanagement.repository.enums.ERole;
 import com.hrmanagement.repository.enums.EStatus;
 import com.hrmanagement.utility.CodeGenerator;
 import com.hrmanagement.utility.JwtTokenManager;
@@ -43,6 +41,30 @@ public class AuthService extends ServiceManager<Auth, Long> {
             authRepository.save(auth);
             userRegisterProducer.sendNewUser(IAuthMapper.INSTANCE.fromAuthToUserRegisterModel(auth));
             // user'a mailsender bu kısma eklenecek.
+        }else {
+            throw new AuthManagerException(ErrorType.PASSWORD_ERROR);
+        }
+        RegisterResponseDto responseDto = IAuthMapper.INSTANCE.fromAuthToAuthRegisterResponseDto(auth);
+        return responseDto;
+    }
+
+    public RegisterResponseDto doRegisterManager(ManagerRegisterRequestDto dto){
+        Auth auth = Auth.builder()
+                .name(dto.getName())
+                .surname(dto.getSurname())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .taxNo(dto.getTaxNo())
+                .companyName(dto.getCompanyName())
+                .role(ERole.MANAGER)
+                .build();
+        if (authRepository.findOptionalByEmail(dto.getEmail()).isPresent()){
+            throw new AuthManagerException(ErrorType.EMAIL_DUPLICATE);
+        }
+        if (auth.getPassword().equals(dto.getPasswordConfirm())){
+            auth.setActivationCode((CodeGenerator.generateCode()));
+            authRepository.save(auth);
+            userRegisterProducer.sendNewUser(IAuthMapper.INSTANCE.fromAuthToUserRegisterModel(auth));
         }else {
             throw new AuthManagerException(ErrorType.PASSWORD_ERROR);
         }

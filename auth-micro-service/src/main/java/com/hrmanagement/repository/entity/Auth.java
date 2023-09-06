@@ -32,7 +32,7 @@ public class Auth extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private EStatus status = EStatus.PENDING;
-    Long taxNo;
+    String taxNo;
     String companyName;
 
 }
