@@ -1,9 +1,6 @@
 package com.hrmanagement.controller;
 
-import com.hrmanagement.dto.request.ActivateRequestDto;
-import com.hrmanagement.dto.request.AuthUpdateRequestDto;
-import com.hrmanagement.dto.request.LoginRequestDto;
-import com.hrmanagement.dto.request.RegisterRequestDto;
+import com.hrmanagement.dto.request.*;
 import com.hrmanagement.dto.response.RegisterResponseDto;
 import com.hrmanagement.service.AuthService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -25,6 +22,11 @@ public class AuthController {
     @PostMapping(REGISTER)
     public ResponseEntity<RegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto dto){
         return ResponseEntity.ok(authService.doRegister(dto));
+    }
+
+    @PostMapping(REGISTER_MANAGER)
+    public ResponseEntity<RegisterResponseDto> registerManager(@RequestBody @Valid ManagerRegisterRequestDto dto){
+        return ResponseEntity.ok(authService.doRegisterManager(dto));
     }
 
     @PostMapping(LOGIN)
