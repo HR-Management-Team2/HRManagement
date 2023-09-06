@@ -1,10 +1,8 @@
-server:
-  port: 8090
 spring:
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: hrmanagement
-      username: bilgeadmin
-      password: root
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URL}
+  config:
+    import: "configserver:"
+  application:
+    name: user-application

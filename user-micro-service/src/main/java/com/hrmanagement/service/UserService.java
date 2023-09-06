@@ -5,6 +5,7 @@ import com.hrmanagement.dto.request.UserUpdateRequestDto;
 import com.hrmanagement.exceptions.ErrorType;
 import com.hrmanagement.exceptions.UserManagerException;
 import com.hrmanagement.mapper.IUserMapper;
+import com.hrmanagement.rabbitmq.model.UserRegisterModel;
 import com.hrmanagement.repository.IUserRepository;
 import com.hrmanagement.repository.entity.User;
 import com.hrmanagement.repository.enums.EStatus;
@@ -23,7 +24,7 @@ public class UserService extends ServiceManager<User,String> {
         this.repository=repository;
     }
 
-    public Boolean createUser(UserCreateRequestDto dto) {
+    public Boolean createUserBasic(UserCreateRequestDto dto) {
         repository.save(IUserMapper.INSTANCE.fromCreateDtoToUser(dto));
         return true;
     }
@@ -50,5 +51,10 @@ public class UserService extends ServiceManager<User,String> {
         return true;
     }
 
+
+    public Boolean createUser(UserRegisterModel model){
+        repository.save(IUserMapper.INSTANCE.fromRegisterModelToUser(model));
+        return true;
+    }
 
 }

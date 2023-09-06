@@ -19,8 +19,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping(CREATE_USER)
-    public ResponseEntity<Boolean> createUser(@RequestBody UserCreateRequestDto dto) {
-        return ResponseEntity.ok(userService.createUser(dto));
+    public ResponseEntity<Boolean> createUserBasic(@RequestBody UserCreateRequestDto dto) {
+        return ResponseEntity.ok(userService.createUserBasic(dto));
     }
 
     @PutMapping(UPDATE_USER)

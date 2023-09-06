@@ -2,6 +2,7 @@ package com.hrmanagement.mapper;
 
 import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
+import com.hrmanagement.rabbitmq.model.UserRegisterModel;
 import com.hrmanagement.repository.entity.User;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -15,4 +16,6 @@ public interface IUserMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     User fromUpdateDtoToUserProfile(UserUpdateRequestDto dto, @MappingTarget User user);
+
+    User fromRegisterModelToUser(UserRegisterModel model);
 }
