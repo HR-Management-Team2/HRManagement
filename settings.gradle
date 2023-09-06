@@ -3,4 +3,5 @@ include 'auth-micro-service'
 include 'user-micro-service'
 include 'mail-micro-service'
 include 'company-micro-service'
+include 'config-server'
 

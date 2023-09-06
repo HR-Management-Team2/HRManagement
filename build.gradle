@@ -44,6 +44,7 @@ allprojects {
         annotationProcessor libs.mapstructProcessor
         implementation libs.springBootValidation
         implementation libs.openapi
+        implementation libs.springOpenFeign
 
     }
 }

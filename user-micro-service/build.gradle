@@ -5,5 +5,8 @@ buildscript {
 }
 
 dependencies {
-
+    implementation libs.springBootDataMongodb
+    implementation libs.springCloudConfigClient
+    implementation libs.springBootRabbitMQ
+    implementation libs.javaJWT
 }

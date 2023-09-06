@@ -1,2 +1,8 @@
-server:
-  port: 9080
+spring:
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URL}
+  config:
+    import: "configserver:"
+  application:
+    name: company-application

@@ -8,6 +8,7 @@ import com.hrmanagement.dto.response.RegisterResponseDto;
 import com.hrmanagement.exception.AuthManagerException;
 import com.hrmanagement.exception.ErrorType;
 import com.hrmanagement.mapper.IAuthMapper;
+import com.hrmanagement.rabbitmq.producer.UserRegisterProducer;
 import com.hrmanagement.repository.IAuthRepository;
 import com.hrmanagement.repository.entity.Auth;
 import com.hrmanagement.repository.enums.EStatus;
@@ -23,19 +24,25 @@ import java.util.Optional;
 public class AuthService extends ServiceManager<Auth, Long> {
     private final IAuthRepository authRepository;
     private final JwtTokenManager jwtTokenManager;
+    private final UserRegisterProducer userRegisterProducer;
 
-    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager) {
+    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, UserRegisterProducer userRegisterProducer) {
         super(authRepository);
         this.authRepository = authRepository;
         this.jwtTokenManager = jwtTokenManager;
+        this.userRegisterProducer = userRegisterProducer;
     }
 
     public RegisterResponseDto doRegister(RegisterRequestDto dto){
         Auth auth = IAuthMapper.INSTANCE.fromAuthRegisterRequestDtoToAuth(dto);
+        if (authRepository.findOptionalByEmail(dto.getEmail()).isPresent()){
+            throw new AuthManagerException(ErrorType.EMAIL_DUPLICATE);
+        }
         if (auth.getPassword().equals(dto.getPasswordConfirm())){
             auth.setActivationCode((CodeGenerator.generateCode()));
             authRepository.save(auth);
-            // user'a gönderilecek & mailsender bu kısma eklenecek.
+            userRegisterProducer.sendNewUser(IAuthMapper.INSTANCE.fromAuthToUserRegisterModel(auth));
+            // user'a mailsender bu kısma eklenecek.
         }else {
             throw new AuthManagerException(ErrorType.PASSWORD_ERROR);
         }
