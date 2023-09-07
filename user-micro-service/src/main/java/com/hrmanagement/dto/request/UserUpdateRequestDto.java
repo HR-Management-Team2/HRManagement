@@ -15,7 +15,6 @@ import java.time.LocalDate;
 @Builder
 public class UserUpdateRequestDto {
 
-    private Long authId;
     private String name;
     private String surname;
     private String email;
@@ -25,10 +24,9 @@ public class UserUpdateRequestDto {
     private LocalDate birthday;
     private String birthdayPlace;
     private String company_name;
-    private Double salary;
     private LocalDate start_date;
     private LocalDate end_date;
-    private EStatus status ;
-    private ERole role;
+    private String token;
+
 
 }

@@ -6,4 +6,3 @@ spring:
     import: "configserver:"
   application:
     name: auth-application
-

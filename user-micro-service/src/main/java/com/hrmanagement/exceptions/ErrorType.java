@@ -18,9 +18,11 @@ public enum ErrorType {
     ALREADY_ACTIVE(4006,"Hesabınız Zaten Aktif",HttpStatus.BAD_REQUEST),
     PASSWORD_ERROR(4007, "Şifreler uyuşmuyor.", HttpStatus.BAD_REQUEST),
     INVALID_TOKEN(4008, "Token hatası", HttpStatus.BAD_REQUEST),
+    USER_ACCESS_ERROR(4009,"Hesabınız aktif değil" ,HttpStatus.BAD_REQUEST ),
 
     //SERVER ERROR
     INTERNAL_ERROR(5000,"Sunucu Hatası",HttpStatus.INTERNAL_SERVER_ERROR);
+
 
     private int code;
     private String message;

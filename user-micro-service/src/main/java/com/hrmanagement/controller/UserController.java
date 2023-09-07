@@ -4,6 +4,7 @@ import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
 import com.hrmanagement.repository.entity.User;
 import com.hrmanagement.service.UserService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +25,8 @@ public class UserController {
     }
 
     @PutMapping(UPDATE_USER)
-    public ResponseEntity<Boolean> updateUser( @RequestBody UserUpdateRequestDto dto){
-        return ResponseEntity.ok(userService.updateUser(dto));
+    public ResponseEntity<Boolean> updateUser(String token, @RequestBody UserUpdateRequestDto dto){
+        return ResponseEntity.ok(userService.updateUser(token, dto));
     }
 
     @DeleteMapping(DELETE_USER)
@@ -36,5 +37,15 @@ public class UserController {
     @GetMapping(FINDALL)
     public ResponseEntity<List<User>> findAll(){
         return ResponseEntity.ok(userService.findAll());
+    }
+    @Hidden
+    @PutMapping(ACTIVATE_STATUS)
+    public ResponseEntity<Boolean> activateStatus(@PathVariable Long authId){
+        return ResponseEntity.ok(userService.activateStatus(authId));
+    }
+
+    @PutMapping(ACTIVATE_STATUS_MANAGER)
+    public ResponseEntity<Boolean> activateStatusManager(Long authId){
+        return ResponseEntity.ok(userService.activateStatusManager(authId));
     }
 }
