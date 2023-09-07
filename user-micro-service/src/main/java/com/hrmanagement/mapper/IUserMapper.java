@@ -1,5 +1,6 @@
 package com.hrmanagement.mapper;
 
+import com.hrmanagement.dto.request.AuthUpdateRequestDto;
 import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
 import com.hrmanagement.rabbitmq.model.UserRegisterModel;
@@ -18,4 +19,6 @@ public interface IUserMapper {
     User fromUpdateDtoToUserProfile(UserUpdateRequestDto dto, @MappingTarget User user);
 
     User fromRegisterModelToUser(UserRegisterModel model);
+
+    AuthUpdateRequestDto fromUserToAuthUpdateDto(User user);
 }

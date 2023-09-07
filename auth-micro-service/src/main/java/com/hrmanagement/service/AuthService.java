@@ -1,10 +1,14 @@
 package com.hrmanagement.service;
 
 import com.hrmanagement.dto.request.*;
+import com.hrmanagement.dto.response.LoginResponseDto;
 import com.hrmanagement.dto.response.RegisterResponseDto;
 import com.hrmanagement.exception.AuthManagerException;
 import com.hrmanagement.exception.ErrorType;
+import com.hrmanagement.manager.IUserManager;
 import com.hrmanagement.mapper.IAuthMapper;
+import com.hrmanagement.rabbitmq.model.MailRegisterModel;
+import com.hrmanagement.rabbitmq.producer.MailRegisterProducer;
 import com.hrmanagement.rabbitmq.producer.UserRegisterProducer;
 import com.hrmanagement.repository.IAuthRepository;
 import com.hrmanagement.repository.entity.Auth;
@@ -23,12 +27,17 @@ public class AuthService extends ServiceManager<Auth, Long> {
     private final IAuthRepository authRepository;
     private final JwtTokenManager jwtTokenManager;
     private final UserRegisterProducer userRegisterProducer;
+    private final MailRegisterProducer mailRegisterProducer;
+    private final IUserManager userManager;
 
-    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, UserRegisterProducer userRegisterProducer) {
+
+    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, UserRegisterProducer userRegisterProducer, MailRegisterProducer mailRegisterProducer, IUserManager userManager) {
         super(authRepository);
         this.authRepository = authRepository;
         this.jwtTokenManager = jwtTokenManager;
         this.userRegisterProducer = userRegisterProducer;
+        this.mailRegisterProducer = mailRegisterProducer;
+        this.userManager = userManager;
     }
 
     public RegisterResponseDto doRegister(RegisterRequestDto dto){
@@ -41,6 +50,10 @@ public class AuthService extends ServiceManager<Auth, Long> {
             authRepository.save(auth);
             userRegisterProducer.sendNewUser(IAuthMapper.INSTANCE.fromAuthToUserRegisterModel(auth));
             // user'a mailsender bu kısma eklenecek.
+
+            MailRegisterModel model = IAuthMapper.INSTANCE.fromAuthToMailRegisterModel(auth);
+
+            mailRegisterProducer.sendRegisterMail(model);
         }else {
             throw new AuthManagerException(ErrorType.PASSWORD_ERROR);
         }
@@ -62,7 +75,6 @@ public class AuthService extends ServiceManager<Auth, Long> {
             throw new AuthManagerException(ErrorType.EMAIL_DUPLICATE);
         }
         if (auth.getPassword().equals(dto.getPasswordConfirm())){
-            auth.setActivationCode((CodeGenerator.generateCode()));
             authRepository.save(auth);
             userRegisterProducer.sendNewUser(IAuthMapper.INSTANCE.fromAuthToUserRegisterModel(auth));
         }else {
@@ -72,7 +84,7 @@ public class AuthService extends ServiceManager<Auth, Long> {
         return responseDto;
     }
 
-    public String doLogin(LoginRequestDto dto){
+    public LoginResponseDto doLogin(LoginRequestDto dto){
         Optional<Auth> auth = authRepository.findOptionalByEmailAndPassword(dto.getEmail(),dto.getPassword());
         if (auth.isEmpty()) throw new AuthManagerException(ErrorType.LOGIN_ERROR);
         if(!auth.get().getStatus().equals(EStatus.ACTIVE)){
@@ -80,7 +92,11 @@ public class AuthService extends ServiceManager<Auth, Long> {
         }
         Optional<String> token = jwtTokenManager.createToken(auth.get().getId(),auth.get().getRole());
         if (token.isEmpty()) throw new AuthManagerException(ErrorType.BAD_REQUEST);
-        return token.get();
+        LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+                .role(auth.get().getRole())
+                .token(token.get())
+                .build();
+        return loginResponseDto;
 
     }
 
@@ -100,6 +116,7 @@ public class AuthService extends ServiceManager<Auth, Long> {
             optionalAuth.get().setStatus(EStatus.ACTIVE);
             update(optionalAuth.get());
             //userprofilemanager yazılıp daha sonra user'a gönderilecek bu kısımda
+            userManager.activateStatus(optionalAuth.get().getId());
             return true;
         }else {
             throw new AuthManagerException(ErrorType.ACTIVATE_CODE_ERROR);
@@ -116,5 +133,15 @@ public class AuthService extends ServiceManager<Auth, Long> {
     }
 
 
+    public Boolean activateStatusManager(Long id) {
+        Optional<Auth> auth = authRepository.findById(id);
+        auth.orElseThrow(() -> {
+            throw new AuthManagerException(ErrorType.USER_NOT_FOUND);
+        });
 
+        auth.get().setStatus(EStatus.ACTIVE);
+        update(auth.get());
+        return true;
+
+    }
 }

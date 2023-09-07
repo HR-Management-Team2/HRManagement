@@ -1,6 +1,7 @@
 package com.hrmanagement.controller;
 
 import com.hrmanagement.dto.request.*;
+import com.hrmanagement.dto.response.LoginResponseDto;
 import com.hrmanagement.dto.response.RegisterResponseDto;
 import com.hrmanagement.service.AuthService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -30,7 +31,7 @@ public class AuthController {
     }
 
     @PostMapping(LOGIN)
-    public ResponseEntity<String> login(@RequestBody LoginRequestDto dto){
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto){
         return ResponseEntity.ok(authService.doLogin(dto));
     }
 
@@ -43,6 +44,12 @@ public class AuthController {
     @PutMapping(UPDATE)
     public ResponseEntity<Boolean> updateAuth(@RequestBody AuthUpdateRequestDto dto){
         return ResponseEntity.ok(authService.updateAuth(dto));
+    }
+
+    @Hidden
+    @PutMapping(ACTIVATE_STATUS_MANAGER)
+    public ResponseEntity<Boolean> activateStatusManager(@PathVariable Long id){
+        return ResponseEntity.ok(authService.activateStatusManager(id));
     }
 
 }
