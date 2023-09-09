@@ -13,7 +13,7 @@ public class MailRegisterProducer {
     private String mailRegisterBinding = "mail-register-binding";
 
     private final RabbitTemplate rabbitTemplate;
-    public void sendRegisterMail(MailRegisterModel mailRegisterModel){
-        rabbitTemplate.convertAndSend(exchange, mailRegisterBinding, mailRegisterModel);
+    public void sendActivationCode(MailRegisterModel registerMailModel){
+        rabbitTemplate.convertAndSend(exchange,mailRegisterBinding, registerMailModel);
     }
 }

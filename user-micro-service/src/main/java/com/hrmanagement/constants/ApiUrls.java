@@ -7,6 +7,6 @@ public class ApiUrls {
     public static final String UPDATE_USER = "/update-user";
     public static final String DELETE_USER = "/delete-user";
     public static final String FINDALL = "/findall";
-    public static final String ACTIVATE_STATUS = "/activate-status/{authId}";
+    public static final String ACTIVATE_STATUS = "/activate-status";
     public static final String ACTIVATE_STATUS_MANAGER = "/activate-status-manager";
 }

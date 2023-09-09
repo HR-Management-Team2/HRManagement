@@ -73,7 +73,7 @@ public class UserService extends ServiceManager<User,String> {
     }
 
 
-    public Boolean activateStatus(Long authId) {
+    /*public Boolean activateStatus(Long authId) {
         Optional<User> userProfile = repository.findOptionalByAuthId(authId);
         userProfile.orElseThrow(() -> {
             throw new UserManagerException(ErrorType.USER_NOT_FOUND);
@@ -83,6 +83,22 @@ public class UserService extends ServiceManager<User,String> {
         update(userProfile.get());
         return true;
 
+    }*/
+
+    public Boolean activateStatus(String token) {
+        System.out.println("Service' e gelen token --> " + token);
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(token.substring(7));
+        System.out.println("Service' de substring edilmiş token --> " + token.substring(7));
+        if (authId.isEmpty()) {
+            throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        }
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()) {
+            throw new RuntimeException("Auth id bulunamadı");
+        }
+        user.get().setStatus(EStatus.ACTIVE);
+        update(user.get());
+        return true;
     }
 
     @Transactional

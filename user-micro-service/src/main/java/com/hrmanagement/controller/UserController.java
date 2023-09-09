@@ -38,10 +38,11 @@ public class UserController {
     public ResponseEntity<List<User>> findAll(){
         return ResponseEntity.ok(userService.findAll());
     }
+
     @Hidden
-    @PutMapping(ACTIVATE_STATUS)
-    public ResponseEntity<Boolean> activateStatus(@PathVariable Long authId){
-        return ResponseEntity.ok(userService.activateStatus(authId));
+    @PostMapping(ACTIVATE_STATUS)
+    public ResponseEntity<Boolean> activateStatus(@RequestHeader(value = "Authorization") String token){
+        return ResponseEntity.ok(userService.activateStatus(token));
     }
 
     @PutMapping(ACTIVATE_STATUS_MANAGER)
