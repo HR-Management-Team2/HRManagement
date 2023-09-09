@@ -35,9 +35,15 @@ public class AuthController {
         return ResponseEntity.ok(authService.doLogin(dto));
     }
 
-    @PostMapping(ACTIVATE_STATUS)
+    /*@PostMapping(ACTIVATE_STATUS)
     public ResponseEntity<Boolean> activateStatus(@RequestBody ActivateRequestDto dto){
         return ResponseEntity.ok(authService.activateStatus(dto));
+    }*/
+
+    @GetMapping(ACTIVATE_STATUS)
+    public ResponseEntity<Boolean> activateStatus(@RequestParam String token){
+        System.out.println("AuthController activateStatus' e gelen token: " + token);
+        return ResponseEntity.ok(authService.activateStatus(token));
     }
 
     @Hidden

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(url = "${openfeign.auth-manager-url}", name = "userprofile-auth")
+@FeignClient(url = "${openfeign.auth-manager-url}", name = "user-auth")
 public interface IAuthManager {
     @PutMapping("/update")
     public ResponseEntity<Boolean> updateAuth(@RequestBody AuthUpdateRequestDto dto);

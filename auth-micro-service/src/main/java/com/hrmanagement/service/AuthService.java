@@ -50,10 +50,13 @@ public class AuthService extends ServiceManager<Auth, Long> {
             authRepository.save(auth);
             userRegisterProducer.sendNewUser(IAuthMapper.INSTANCE.fromAuthToUserRegisterModel(auth));
             // user'a mailsender bu kısma eklenecek.
-
-            MailRegisterModel model = IAuthMapper.INSTANCE.fromAuthToMailRegisterModel(auth);
-
-            mailRegisterProducer.sendRegisterMail(model);
+            //link için
+            String token = jwtTokenManager.createToken(auth.getId(), auth.getRole()).get();
+            mailRegisterProducer.sendActivationCode(MailRegisterModel.builder()
+                    .name(auth.getName())
+                    .surname(auth.getSurname())
+                    .email(auth.getEmail())
+                    .token(token).build());
         }else {
             throw new AuthManagerException(ErrorType.PASSWORD_ERROR);
         }
@@ -100,7 +103,7 @@ public class AuthService extends ServiceManager<Auth, Long> {
 
     }
 
-    @Transactional
+    /*@Transactional
     public Boolean activateStatus(ActivateRequestDto dto) {
         Optional<Auth> optionalAuth = findById(dto.getId());
         if (optionalAuth.isEmpty()){
@@ -121,6 +124,19 @@ public class AuthService extends ServiceManager<Auth, Long> {
         }else {
             throw new AuthManagerException(ErrorType.ACTIVATE_CODE_ERROR);
         }
+    }*/
+
+    public Boolean activateStatus(String token) {
+        System.out.println("Activate status service metoduna gelen token: " + token);
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(token);
+        if (authId.isPresent()) {
+            Optional<Auth> auth = findById(authId.get());
+            auth.get().setStatus(EStatus.ACTIVE);
+            update(auth.get());
+            userManager.activateStatus("Bearer " + token);
+            return true;
+        }
+        throw new AuthManagerException(ErrorType.USER_NOT_FOUND);
     }
 
     public Boolean updateAuth(AuthUpdateRequestDto dto){
