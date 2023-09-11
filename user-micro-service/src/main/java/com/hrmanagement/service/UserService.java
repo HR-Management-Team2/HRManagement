@@ -1,6 +1,7 @@
 package com.hrmanagement.service;
 
 import com.hrmanagement.dto.request.AuthUpdateRequestDto;
+import com.hrmanagement.dto.request.EmployeeCreateRequestDto;
 import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
 import com.hrmanagement.exceptions.ErrorType;
@@ -10,6 +11,7 @@ import com.hrmanagement.mapper.IUserMapper;
 import com.hrmanagement.rabbitmq.model.UserRegisterModel;
 import com.hrmanagement.repository.IUserRepository;
 import com.hrmanagement.repository.entity.User;
+import com.hrmanagement.repository.enums.ERole;
 import com.hrmanagement.repository.enums.EStatus;
 import com.hrmanagement.utility.JwtTokenManager;
 import com.hrmanagement.utility.ServiceManager;
@@ -120,4 +122,41 @@ public class UserService extends ServiceManager<User,String> {
             return true;
         }
     }
+
+    public Boolean createEmployee(EmployeeCreateRequestDto dto){
+        User user = User.builder()
+                .name(dto.getName())
+                .surname(dto.getSurname())
+                .idNumber(dto.getIdNumber())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .address(dto.getAddress())
+                .phone(dto.getPhone())
+                .birthday(dto.getBirthday())
+                .birthdayPlace(dto.getBirthdayPlace())
+                .company_name(dto.getCompany_name())
+                .occupation(dto.getOccupation())
+                .salary(dto.getSalary())
+                .role(ERole.EMPLOYEE)
+                .build();
+        if (repository.findOptionalByEmail(dto.getEmail()).isPresent()){
+            throw new UserManagerException(ErrorType.EMAIL_DUPLICATE);
+        }
+        repository.save(user);
+        return true;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
