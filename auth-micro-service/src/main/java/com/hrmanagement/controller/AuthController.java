@@ -21,16 +21,19 @@ public class AuthController {
 
 
     @PostMapping(REGISTER)
+    @CrossOrigin("*")
     public ResponseEntity<RegisterResponseDto> register(@RequestBody @Valid RegisterRequestDto dto){
         return ResponseEntity.ok(authService.doRegister(dto));
     }
 
     @PostMapping(REGISTER_MANAGER)
+    @CrossOrigin("*")
     public ResponseEntity<RegisterResponseDto> registerManager(@RequestBody @Valid ManagerRegisterRequestDto dto){
         return ResponseEntity.ok(authService.doRegisterManager(dto));
     }
 
     @PostMapping(LOGIN)
+    @CrossOrigin("*")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto){
         return ResponseEntity.ok(authService.doLogin(dto));
     }

@@ -23,6 +23,7 @@ public class User extends BaseEntity {
     private Long authId;
     private String name;
     private String surname;
+    private String idNumber;
     private String email;
     private String password;
     private String address;
@@ -30,6 +31,7 @@ public class User extends BaseEntity {
     private LocalDate birthday;
     private String birthdayPlace;
     private String company_name;
+    private String occupation;
     private Double salary;
     private LocalDate start_date;
     private LocalDate end_date;
