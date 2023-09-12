@@ -1,4 +1,4 @@
-package com.hrmanagement.dto.request;
+package com.hrmanagement.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-public class AuthEmployeeCreateRequestDto {
-
+public class UserResponseDto {
+    String userId;
 
 }

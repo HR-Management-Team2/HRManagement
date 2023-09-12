@@ -100,7 +100,7 @@ public class GlobalExceptionHandler {
     //istediğinizde DataIntegrityViolation hatası alırsınız.
     @ExceptionHandler(DataIntegrityViolationException.class)
     public final ResponseEntity<ErrorMessage> handlePsqlException(DataIntegrityViolationException exception) {
-        ErrorType errorType = ErrorType.USERNAME_DUPLICATE;
+        ErrorType errorType = ErrorType.EMAIL_DUPLICATE;
         return new ResponseEntity<>(createError(errorType, exception), errorType.getHttpStatus());
     }
 }

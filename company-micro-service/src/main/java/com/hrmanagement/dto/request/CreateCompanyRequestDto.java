@@ -20,9 +20,6 @@ public class CreateCompanyRequestDto {
     String address;
     String email;
     Integer numberOfWorkers;
-
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate yearOfEstablishment;
-
-    Status status;
 }
