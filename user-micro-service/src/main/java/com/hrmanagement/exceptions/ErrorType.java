@@ -19,6 +19,7 @@ public enum ErrorType {
     PASSWORD_ERROR(4007, "Şifreler uyuşmuyor.", HttpStatus.BAD_REQUEST),
     INVALID_TOKEN(4008, "Token hatası", HttpStatus.BAD_REQUEST),
     USER_ACCESS_ERROR(4009,"Hesabınız aktif değil" ,HttpStatus.BAD_REQUEST ),
+    EMPLOYEE_HAS_BEEN(4010,"Personel zaten kayıtlı" ,HttpStatus.BAD_REQUEST ),
 
 
     //SERVER ERROR

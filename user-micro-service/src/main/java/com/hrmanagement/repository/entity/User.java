@@ -30,7 +30,8 @@ public class User extends BaseEntity {
     private String phone;
     private LocalDate birthday;
     private String birthdayPlace;
-    private String company_name;
+    private String companyName;
+    private String taxNo;
     private String occupation;
     private Double salary;
     private LocalDate start_date;

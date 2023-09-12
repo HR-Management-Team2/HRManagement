@@ -8,7 +8,9 @@ import com.hrmanagement.exceptions.ErrorType;
 import com.hrmanagement.exceptions.UserManagerException;
 import com.hrmanagement.manager.IAuthManager;
 import com.hrmanagement.mapper.IUserMapper;
+import com.hrmanagement.rabbitmq.model.CreateEmployee;
 import com.hrmanagement.rabbitmq.model.UserRegisterModel;
+import com.hrmanagement.rabbitmq.producer.EmployeeProducer;
 import com.hrmanagement.repository.IUserRepository;
 import com.hrmanagement.repository.entity.User;
 import com.hrmanagement.repository.enums.ERole;
@@ -26,12 +28,14 @@ public class UserService extends ServiceManager<User,String> {
     private final IUserRepository repository;
     private final JwtTokenManager jwtTokenManager;
     private final IAuthManager authManager;
+    private final EmployeeProducer employeeProducer;
 
-    public UserService(IUserRepository repository, JwtTokenManager jwtTokenManager, IAuthManager authManager) {
+    public UserService(IUserRepository repository, JwtTokenManager jwtTokenManager, IAuthManager authManager, EmployeeProducer employeeProducer) {
         super(repository);
         this.repository = repository;
         this.jwtTokenManager = jwtTokenManager;
         this.authManager = authManager;
+        this.employeeProducer = employeeProducer;
     }
 
     public Boolean createUser(UserRegisterModel model) {
@@ -123,40 +127,58 @@ public class UserService extends ServiceManager<User,String> {
         }
     }
 
-    public Boolean createEmployee(EmployeeCreateRequestDto dto){
-        User user = User.builder()
-                .name(dto.getName())
-                .surname(dto.getSurname())
-                .idNumber(dto.getIdNumber())
+//    public Boolean createEmployee(EmployeeCreateRequestDto dto){
+//        User user = User.builder()
+//                .name(dto.getName())
+//                .surname(dto.getSurname())
+//                .idNumber(dto.getIdNumber())
+//                .email(dto.getEmail())
+//                .password(dto.getPassword())
+//                .address(dto.getAddress())
+//                .phone(dto.getPhone())
+//                .birthday(dto.getBirthday())
+//                .birthdayPlace(dto.getBirthdayPlace())
+//                .company_name(dto.getCompany_name())
+//                .occupation(dto.getOccupation())
+//                .salary(dto.getSalary())
+//                .role(ERole.EMPLOYEE)
+//                .build();
+//        if (repository.findOptionalByEmail(dto.getEmail()).isPresent()){
+//            throw new UserManagerException(ErrorType.EMAIL_DUPLICATE);
+//        }
+//        repository.save(user);
+//        return true;
+//    }
+
+
+    public Boolean addEmployee(EmployeeCreateRequestDto dto) {
+        Long idEmployee = employeeProducer.sendEmployeeAuth(CreateEmployee.builder()
                 .email(dto.getEmail())
-                .password(dto.getPassword())
-                .address(dto.getAddress())
-                .phone(dto.getPhone())
-                .birthday(dto.getBirthday())
-                .birthdayPlace(dto.getBirthdayPlace())
-                .company_name(dto.getCompany_name())
-                .occupation(dto.getOccupation())
-                .salary(dto.getSalary())
-                .role(ERole.EMPLOYEE)
-                .build();
-        if (repository.findOptionalByEmail(dto.getEmail()).isPresent()){
-            throw new UserManagerException(ErrorType.EMAIL_DUPLICATE);
+                .companyName(dto.getCompanyName())
+                .taxNo(dto.getTaxNo()).build());
+        System.out.println(idEmployee);
+        if(idEmployee!=0L) {
+            Optional<User> employeeOptional=repository.findOptionalByIdNumber(dto.getIdNumber());
+            if (employeeOptional.isPresent()) throw new UserManagerException(ErrorType.EMPLOYEE_HAS_BEEN);
+                User employee = User.builder()
+                        .name(dto.getName())
+                        .surname(dto.getSurname())
+                        .idNumber(dto.getIdNumber())
+                        .email(dto.getEmail())
+                        .address(dto.getAddress())
+                        .phone(dto.getPhone())
+                        .birthday(dto.getBirthday())
+                        .birthdayPlace(dto.getBirthdayPlace())
+                        .companyName(dto.getCompanyName())
+                        .taxNo(dto.getTaxNo())
+                        .occupation(dto.getOccupation())
+                        .salary(dto.getSalary())
+                        .authId(idEmployee)
+                        .role(ERole.EMPLOYEE)
+                        .build();
+                repository.save(employee);
         }
-        repository.save(user);
         return true;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
+        }
 
 }
