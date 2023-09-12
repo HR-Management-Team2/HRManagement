@@ -7,6 +7,7 @@ import com.hrmanagement.exception.AuthManagerException;
 import com.hrmanagement.exception.ErrorType;
 import com.hrmanagement.manager.IUserManager;
 import com.hrmanagement.mapper.IAuthMapper;
+import com.hrmanagement.rabbitmq.model.CreateEmployee;
 import com.hrmanagement.rabbitmq.model.MailRegisterModel;
 import com.hrmanagement.rabbitmq.producer.MailRegisterProducer;
 import com.hrmanagement.rabbitmq.producer.UserRegisterProducer;
@@ -18,9 +19,9 @@ import com.hrmanagement.utility.CodeGenerator;
 import com.hrmanagement.utility.JwtTokenManager;
 import com.hrmanagement.utility.ServiceManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthService extends ServiceManager<Auth, Long> {
@@ -159,6 +160,30 @@ public class AuthService extends ServiceManager<Auth, Long> {
         update(auth.get());
         return true;
 
+    }
+
+
+    public Long createEmployee(CreateEmployee createEmployee) {
+        Optional<Auth> auth = authRepository.findOptionalByEmail(createEmployee.getEmail());
+        if (auth.isEmpty()) {
+            Auth authWorker = Auth.builder()
+                    .email(createEmployee.getEmail())
+                    .password(UUID.randomUUID().toString().substring(0, 8))
+                    .companyName(createEmployee.getCompanyName())
+                    .taxNo(createEmployee.getTaxNo())
+                    .role(ERole.EMPLOYEE)
+                    .build();
+            authRepository.save(authWorker);
+            System.out.println(authWorker);
+            System.out.println(authWorker.getId().toString());
+//            authProducer.sendPasswordAfterManagerCreate(MailManagerPassword.builder()
+//                    .mail(authWorker.getEmail())
+//                    .authid(authWorker.getId())
+//                    .password(authWorker.getPassword())
+//                    .build());
+            return authWorker.getId();
+        }
+        return 0L;
     }
 
 

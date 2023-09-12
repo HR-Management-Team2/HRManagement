@@ -1,5 +1,6 @@
 package com.hrmanagement.controller;
 
+import com.hrmanagement.dto.request.EmployeeCreateRequestDto;
 import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
 import com.hrmanagement.repository.entity.User;
@@ -48,5 +49,10 @@ public class UserController {
     @PutMapping(ACTIVATE_STATUS_MANAGER)
     public ResponseEntity<Boolean> activateStatusManager(Long authId){
         return ResponseEntity.ok(userService.activateStatusManager(authId));
+    }
+
+    @PostMapping(ADD_EMPLOYEE)
+    public ResponseEntity<Boolean> addEmployee(EmployeeCreateRequestDto dto) {
+        return ResponseEntity.ok(userService.addEmployee(dto));
     }
 }

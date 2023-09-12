@@ -21,6 +21,8 @@ public enum ErrorType {
     TOKEN_NOT_CREATED(4009,"Token oluşturulamadı", HttpStatus.BAD_REQUEST),
     INVALID_TOKEN(4010,"Token hatası",HttpStatus.BAD_REQUEST),
 
+
+    CONSUMER_ERROR(4050,"Rabbit Consumer Hatası" ,HttpStatus.BAD_REQUEST),
     //SERVER ERROR
     INTERNAL_ERROR(5000,"Sunucu Hatası",HttpStatus.INTERNAL_SERVER_ERROR);
 
