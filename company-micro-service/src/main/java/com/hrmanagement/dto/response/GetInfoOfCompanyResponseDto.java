@@ -20,5 +20,4 @@ public class GetInfoOfCompanyResponseDto {
     String email;
     Integer numberOfWorkers;
     LocalDate yearOfEstablishment;
-    Status status;
 }

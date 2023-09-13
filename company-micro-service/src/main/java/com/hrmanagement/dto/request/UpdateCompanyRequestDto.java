@@ -1,25 +1,26 @@
-package com.hrmanagement.repository.entity;
+package com.hrmanagement.dto.request;
 
-import com.hrmanagement.repository.enums.Status;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import nonapi.io.github.classgraph.json.Id;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
-public class Company extends Base{
-    @Id
-    String id;
+@AllArgsConstructor
+@Builder
+@Data
+public class UpdateCompanyRequestDto {
+
     String name;
     String taxNumber;
     String phone;
     String address;
     String email;
     Integer numberOfWorkers;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate yearOfEstablishment;
+
 }
