@@ -45,12 +45,29 @@ public class RabbitMqConfig {
     public Binding mailRegisterBinding(final Queue mailRegisterQueue, final DirectExchange authExchange){
         return BindingBuilder.bind(mailRegisterQueue).to(authExchange).with(mailRegisterBinding);
     }
+
+    //Mail activate sender producer
+    private String mailActivateQueue = "mail-activate-queue";
+    private String mailActivateBinding = "mail-activate-binding";
+
+    @Bean
+    Queue mailActivateQueue(){
+        return new Queue(mailActivateQueue);
+    }
+
+    @Bean
+    public Binding mailActivateBinding(final Queue mailActivateQueue, final DirectExchange authExchange){
+        return BindingBuilder.bind(mailActivateQueue).to(authExchange).with(mailActivateBinding);
+    }
+
+
     //Employee-added-consumer
     String userEmployeeaddQueue="auth-employeeadd-queue";
     @Bean
     Queue userEmployeeaddQueue() {
         return new Queue(userEmployeeaddQueue);
     }
+
 
 //    //Empolyee kaydetme metodları
 //    private String exchangeCreateEmployeeForAuth = "exchange-employee-auth";

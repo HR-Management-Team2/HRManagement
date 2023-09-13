@@ -8,7 +8,9 @@ import com.hrmanagement.exception.ErrorType;
 import com.hrmanagement.manager.IUserManager;
 import com.hrmanagement.mapper.IAuthMapper;
 import com.hrmanagement.rabbitmq.model.CreateEmployee;
+import com.hrmanagement.rabbitmq.model.MailActivateModel;
 import com.hrmanagement.rabbitmq.model.MailRegisterModel;
+import com.hrmanagement.rabbitmq.producer.MailActivateProducer;
 import com.hrmanagement.rabbitmq.producer.MailRegisterProducer;
 import com.hrmanagement.rabbitmq.producer.UserRegisterProducer;
 import com.hrmanagement.repository.IAuthRepository;
@@ -30,15 +32,17 @@ public class AuthService extends ServiceManager<Auth, Long> {
     private final UserRegisterProducer userRegisterProducer;
     private final MailRegisterProducer mailRegisterProducer;
     private final IUserManager userManager;
+    private final MailActivateProducer activateProducer;
 
 
-    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, UserRegisterProducer userRegisterProducer, MailRegisterProducer mailRegisterProducer, IUserManager userManager) {
+    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, UserRegisterProducer userRegisterProducer, MailRegisterProducer mailRegisterProducer, IUserManager userManager, MailActivateProducer activateProducer) {
         super(authRepository);
         this.authRepository = authRepository;
         this.jwtTokenManager = jwtTokenManager;
         this.userRegisterProducer = userRegisterProducer;
         this.mailRegisterProducer = mailRegisterProducer;
         this.userManager = userManager;
+        this.activateProducer = activateProducer;
     }
 
     public RegisterResponseDto doRegister(RegisterRequestDto dto){
@@ -155,9 +159,11 @@ public class AuthService extends ServiceManager<Auth, Long> {
         auth.orElseThrow(() -> {
             throw new AuthManagerException(ErrorType.USER_NOT_FOUND);
         });
-
         auth.get().setStatus(EStatus.ACTIVE);
         update(auth.get());
+        MailActivateModel model = new MailActivateModel();
+        model.setUserId(auth.get().getId());
+        activateProducer.sendActivateMail(model);
         return true;
 
     }

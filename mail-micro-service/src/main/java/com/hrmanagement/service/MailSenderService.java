@@ -1,5 +1,6 @@
 package com.hrmanagement.service;
 
+import com.hrmanagement.rabbitmq.model.MailActivateModel;
 import com.hrmanagement.rabbitmq.model.MailRegisterModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -24,6 +25,20 @@ public class MailSenderService {
         );
         javaMailSender.send(mailMessage);
     }
+
+    public void sendActivateUserInfo(MailActivateModel mailModel) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom("${spring.mail.username}");
+        mailMessage.setTo(mailModel.getEmail());
+        mailMessage.setSubject("Hesap Aktivasyonu");
+        mailMessage.setText(
+                mailModel.getName() + " " + mailModel.getSurname() + " hesabınız aktif edilmiştir. Giriş bilgileriniz aşağıdaki gibidir:\n"
+                + "E-posta: " + mailModel.getEmail()
+                + "\nŞifre: " + mailModel.getPassword()
+        );
+        javaMailSender.send(mailMessage);
+    }
+
 
 
 }

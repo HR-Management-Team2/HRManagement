@@ -13,6 +13,14 @@ public class RabbitMqConfig {
         return new Queue(mailRegisterQueue);
     }
 
+    //Auth activateManager consumer
+    private String mailActivateQueue = "mail-activate-queue";
+
+    Queue mailActivateQueue(){
+        return new Queue(mailActivateQueue);
+    }
+
+
     //Auth forgotPass consumer
     private String forgotPassMailQueue = "forgot-pass-mail-queue";
     @Bean
