@@ -6,6 +6,8 @@ import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
 import com.hrmanagement.dto.response.AdminProfileResponseDto;
 import com.hrmanagement.dto.response.UserResponseDto;
+import com.hrmanagement.dto.request.*;
+import com.hrmanagement.dto.response.EmployeeListResponseDto;
 import com.hrmanagement.exceptions.ErrorType;
 import com.hrmanagement.exceptions.UserManagerException;
 import com.hrmanagement.manager.IAuthManager;
@@ -23,7 +25,9 @@ import com.hrmanagement.utility.ServiceManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService extends ServiceManager<User,String> {
@@ -154,10 +158,19 @@ public class UserService extends ServiceManager<User,String> {
 
 
     public Boolean addEmployee(EmployeeCreateRequestDto dto) {
+
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(dto.getToken());
+        if (authId.isEmpty()) {
+            throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        }
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()) {
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
         Long idEmployee = employeeProducer.sendEmployeeAuth(CreateEmployee.builder()
                 .email(dto.getEmail())
-                .companyName(dto.getCompanyName())
-                .taxNo(dto.getTaxNo()).build());
+                .companyName(user.get().getCompanyName())
+                .taxNo(user.get().getTaxNo()).build());
         System.out.println(idEmployee);
         if(idEmployee!=0L) {
             Optional<User> employeeOptional=repository.findOptionalByIdNumber(dto.getIdNumber());
@@ -171,8 +184,8 @@ public class UserService extends ServiceManager<User,String> {
                         .phone(dto.getPhone())
                         .birthday(dto.getBirthday())
                         .birthdayPlace(dto.getBirthdayPlace())
-                        .companyName(dto.getCompanyName())
-                        .taxNo(dto.getTaxNo())
+                        .companyName(user.get().getCompanyName())
+                        .taxNo(user.get().getTaxNo())
                         .occupation(dto.getOccupation())
                         .salary(dto.getSalary())
                         .authId(idEmployee)
@@ -210,5 +223,39 @@ public class UserService extends ServiceManager<User,String> {
 
 
 
+
+    public List<EmployeeListResponseDto> findAllEmployee(String token) {
+
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(token);
+        if (authId.isEmpty()) {
+            throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        }
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()) {
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        return repository.findAllByTaxNo(user.get().getTaxNo()).stream().map(x->{
+            return EmployeeListResponseDto.builder().name(x.getName()).surname(x.getSurname()).email(x.getEmail()).address(x.getAddress()).phone(x.getPhone()).occupation(x.getOccupation()).build();
+        }).collect(Collectors.toList());
+    }
+
+    public Boolean updateEmployee(UpdateEmployeeRequestDto dto) {
+        User userEmp= repository.findOptionalByEmail(dto.getEmail())
+                .orElseThrow(()->new UserManagerException(ErrorType.USER_NOT_FOUND));
+        userEmp.setName(dto.getName());
+        userEmp.setSurname(dto.getSurname());
+        userEmp.setIdNumber(dto.getIdNumber());
+        userEmp.setEmail(dto.getEmail());
+        userEmp.setAddress(dto.getAddress());
+        userEmp.setPhone(dto.getPhone());
+        userEmp.setBirthday(dto.getBirthday());
+        userEmp.setBirthdayPlace(dto.getBirthdayPlace());
+        userEmp.setOccupation(dto.getOccupation());
+        userEmp.setSalary(dto.getSalary());
+        repository.save(userEmp);
+        AuthEmployeeUpdateRequestDto authEmployeeUpdateRequestDto=IUserMapper.INSTANCE.fromUserToAuthEmployeeUpdateDto(userEmp);
+        authManager.updateAuthEmployee(authEmployeeUpdateRequestDto);
+        return true;
+    }
 
 }

@@ -18,5 +18,7 @@ public class UserRegisterModel implements Serializable {
     String surname;
     String email;
     String password;
+    String companyName;
+    String taxNo;
     ERole role;
 }
