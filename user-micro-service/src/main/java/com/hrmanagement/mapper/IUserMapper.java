@@ -1,8 +1,10 @@
 package com.hrmanagement.mapper;
 
+import com.hrmanagement.dto.request.AuthEmployeeUpdateRequestDto;
 import com.hrmanagement.dto.request.AuthUpdateRequestDto;
 import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
+import com.hrmanagement.dto.response.EmployeeListResponseDto;
 import com.hrmanagement.rabbitmq.model.UserRegisterModel;
 import com.hrmanagement.repository.entity.User;
 import org.mapstruct.*;
@@ -21,4 +23,6 @@ public interface IUserMapper {
     User fromRegisterModelToUser(UserRegisterModel model);
 
     AuthUpdateRequestDto fromUserToAuthUpdateDto(User user);
+    AuthEmployeeUpdateRequestDto fromUserToAuthEmployeeUpdateDto(User user);
+    EmployeeListResponseDto toEmployeeListDto(User user);
 }

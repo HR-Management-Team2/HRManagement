@@ -4,6 +4,7 @@ import com.hrmanagement.repository.entity.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,4 +15,5 @@ public interface IUserRepository extends MongoRepository<User,String> {
     Optional<User> findOptionalByEmail(String email);
 
     Optional<User> findOptionalByIdNumber(String idNumber);
+    List<User> findAllByTaxNo(String taxNo);
 }
