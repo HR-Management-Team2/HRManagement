@@ -22,4 +22,5 @@ public class Company extends Base{
     String email;
     Integer numberOfWorkers;
     LocalDate yearOfEstablishment;
+    String status;
 }

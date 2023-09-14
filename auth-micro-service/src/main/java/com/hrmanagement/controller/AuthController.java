@@ -16,6 +16,7 @@ import static com.hrmanagement.constant.ApiUrls.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(AUTH)
+@CrossOrigin("*")
 public class AuthController {
     private final AuthService authService;
 

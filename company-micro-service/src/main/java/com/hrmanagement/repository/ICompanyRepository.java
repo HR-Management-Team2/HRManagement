@@ -14,4 +14,7 @@ public interface ICompanyRepository extends MongoRepository<Company,String > {
     Optional<Company> findById(Long companyId);
 
     Optional<Company> findByTaxNumber(String taxNumber);
+
+    boolean existsByTaxNumber(String taxNumber);
+
 }

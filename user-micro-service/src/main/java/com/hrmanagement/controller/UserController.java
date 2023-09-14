@@ -4,6 +4,8 @@ import com.hrmanagement.dto.request.EmployeeCreateRequestDto;
 import com.hrmanagement.dto.request.UpdateEmployeeRequestDto;
 import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
+import com.hrmanagement.dto.response.AdminProfileResponseDto;
+import com.hrmanagement.dto.response.UserResponseDto;
 import com.hrmanagement.dto.response.EmployeeListResponseDto;
 import com.hrmanagement.repository.entity.User;
 import com.hrmanagement.service.UserService;
@@ -58,6 +60,12 @@ public class UserController {
     public ResponseEntity<Boolean> addEmployee(@RequestBody EmployeeCreateRequestDto dto) {
         return ResponseEntity.ok(userService.addEmployee(dto));
     }
+
+    @GetMapping(FIND_USER)
+    public ResponseEntity<AdminProfileResponseDto> findByUserDto(@PathVariable Long authId){
+        return ResponseEntity.ok(userService.findUser(authId));
+    }
+
     @CrossOrigin("*")
     @GetMapping(FIND_ALL_EMPLOYEE)
     public ResponseEntity<List<EmployeeListResponseDto>> findAllEmployee(String token){
