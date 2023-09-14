@@ -56,6 +56,12 @@ public class AuthController {
     }
 
     @Hidden
+    @PutMapping(UPDATE_EMPLOYEE)
+    public ResponseEntity<Boolean> updateAuthEmployee(@RequestBody AuthEmployeeUpdateRequestDto dto){
+        return ResponseEntity.ok(authService.updateAuthEmployee(dto));
+    }
+
+    @Hidden
     @PutMapping(ACTIVATE_STATUS_MANAGER)
     public ResponseEntity<Boolean> activateStatusManager(@PathVariable Long id){
         return ResponseEntity.ok(authService.activateStatusManager(id));

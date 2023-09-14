@@ -1,6 +1,7 @@
 package com.hrmanagement.dto.request;
 
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @Data
-public class EmployeeCreateRequestDto {
+
+public class UpdateEmployeeRequestDto {
     private String name;
     private String surname;
     private String idNumber;
@@ -25,6 +27,4 @@ public class EmployeeCreateRequestDto {
     private String birthdayPlace;
     private String occupation;
     private Double salary;
-    private String token;
-
 }

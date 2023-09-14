@@ -152,6 +152,14 @@ public class AuthService extends ServiceManager<Auth, Long> {
         }
         throw new RuntimeException("Hata");
     }
+    public Boolean updateAuthEmployee(AuthEmployeeUpdateRequestDto dto){
+        Optional<Auth> auth = authRepository.findById(dto.getAuthId());
+        if (auth.isPresent()){
+            save(IAuthMapper.INSTANCE.fromAuthEmployeeUpdateDtoToAuth(dto,auth.get()));
+            return true;
+        }
+        throw new RuntimeException("Hata");
+    }
 
 
     public Boolean activateStatusManager(Long id) {
