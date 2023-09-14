@@ -16,11 +16,12 @@ import static com.hrmanagement.constant.RestApis.*;
 @RestController
 @RequestMapping(COMPANY)
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping(ADDCOMPANY)
-    public ResponseEntity<Boolean> createCompany(CreateCompanyRequestDto dto){
+    public ResponseEntity<Boolean> createCompany(@RequestBody CreateCompanyRequestDto dto){
         return ResponseEntity.ok(companyService.createCompany(dto));
     }
 
@@ -29,12 +30,17 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.findAllCompanies());
     }
 
-    @PostMapping(UPDATE)
+    @PutMapping(UPDATE)
+    @CrossOrigin("*")
     public ResponseEntity<Company> updateCompany(@PathVariable String taxNumber, @RequestBody UpdateCompanyRequestDto dto){
         Company company = companyService.updateCompany(taxNumber, dto);
         return new ResponseEntity<>(company, HttpStatus.OK);
     }
 
+    @DeleteMapping(DELETE)
+    public ResponseEntity<Boolean> deleteCompany(@RequestBody @PathVariable String taxNumber){
+        return ResponseEntity.ok(companyService.deleteCompany(taxNumber));
+    }
 
 
 

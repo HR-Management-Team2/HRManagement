@@ -103,6 +103,7 @@ public class AuthService extends ServiceManager<Auth, Long> {
         LoginResponseDto loginResponseDto = LoginResponseDto.builder()
                 .role(auth.get().getRole())
                 .token(token.get())
+                .authId(auth.get().getId())
                 .build();
         return loginResponseDto;
 

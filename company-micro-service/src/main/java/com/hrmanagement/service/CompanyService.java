@@ -33,10 +33,14 @@ public class CompanyService extends ServiceManager<Company, String> {
     }
     @Transactional
     public Boolean createCompany(CreateCompanyRequestDto dto) {
+        if (companyRepository.existsByTaxNumber(dto.getTaxNumber())) {
+            throw new CompanyException(ErrorType.DUPLICATE_TAX_NUMBER);
+        }
         Company company = iSetCompanyMapper.toCompany(dto);
         save(company);
         return true;
     }
+
 
    /* public List<GetInfoOfCompanyResponseDto> findAllDto(TokenDto dto){
         Optional<Long> id = jwtTokenService.validToken(dto.getToken());
@@ -66,6 +70,16 @@ public class CompanyService extends ServiceManager<Company, String> {
         company.setNumberOfWorkers(dto.getNumberOfWorkers());
         company.setYearOfEstablishment(dto.getYearOfEstablishment());
         return companyRepository.save(company);
+    }
+
+    @Transactional
+    public Boolean deleteCompany(String taxNumber){
+        Optional<Company> company = companyRepository.findByTaxNumber(taxNumber);
+        if (company.isEmpty()){
+            throw new CompanyException(ErrorType.COMPANY_NOT_FOUND);
+        }
+        companyRepository.delete(company.get());
+        return true;
     }
 
 

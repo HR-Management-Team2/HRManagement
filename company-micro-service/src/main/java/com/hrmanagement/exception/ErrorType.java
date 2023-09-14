@@ -20,7 +20,8 @@ public enum ErrorType {
     INVALID_TOKEN(4001, "GEÇERSİZ TOKEN BİLGİSİ", BAD_REQUEST),
     AUTH_LOGIN_ERROR(4002, "KULLANICI ADI VEYA ŞİFRE HATALIDIR.", INTERNAL_SERVER_ERROR),
     COMPANY_HAS_BEEN(4003, "COMPANY_HAS_BEEN", INTERNAL_SERVER_ERROR),
-    COMPANY_NOT_FOUND(4004,"Şirket bulunamadı.", HttpStatus.NOT_FOUND);
+    COMPANY_NOT_FOUND(4004,"Şirket bulunamadı.", HttpStatus.NOT_FOUND),
+    DUPLICATE_TAX_NUMBER(4005, "Bu şirket sistemde zaten kayıtlıdır.", BAD_REQUEST);
 
     private int code;
     private String message;

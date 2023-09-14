@@ -13,7 +13,7 @@ import java.util.Optional;
 @Service
 public class JwtTokenManager {
 
-    private final long exDate = 1000L*60*5; // Token geçerlilik süresi 5 dk
+    private final long exDate = 1000L*60*30; // Token geçerlilik süresi 30 dk
     private final String secretKey = "secretKey";
     String audience = "hrmanagement";
     String issuer = "bilgeadam";

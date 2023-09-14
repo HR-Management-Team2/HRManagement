@@ -12,4 +12,5 @@ public class ApiUrls {
     public static final String ACTIVATE_STATUS = "/activate-status";
     public static final String ACTIVATE_STATUS_MANAGER = "/activate-status-manager";
     public static final String ADD_EMPLOYEE = "/addemployee";
+    public static final String FIND_USER = "/find-by-user-dto/{authId}";
 }

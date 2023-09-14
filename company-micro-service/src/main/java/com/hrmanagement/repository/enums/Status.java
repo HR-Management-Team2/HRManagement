@@ -1,5 +1,5 @@
 package com.hrmanagement.repository.enums;
 
 public enum Status {
-    ACTIVE, PASSIVE
+    ACTIVE, PASSIVE, DELETED
 }

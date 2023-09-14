@@ -4,6 +4,8 @@ import com.hrmanagement.dto.request.AuthUpdateRequestDto;
 import com.hrmanagement.dto.request.EmployeeCreateRequestDto;
 import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
+import com.hrmanagement.dto.response.AdminProfileResponseDto;
+import com.hrmanagement.dto.response.UserResponseDto;
 import com.hrmanagement.exceptions.ErrorType;
 import com.hrmanagement.exceptions.UserManagerException;
 import com.hrmanagement.manager.IAuthManager;
@@ -180,5 +182,33 @@ public class UserService extends ServiceManager<User,String> {
         }
         return true;
         }
+
+        public AdminProfileResponseDto findUser(Long authId){
+        Optional<User> user = repository.findOptionalByAuthId(authId);
+        if (user.isEmpty()){
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        AdminProfileResponseDto adminProfileResponseDto = IUserMapper.INSTANCE.fromUserToAdminResponseDto(user.get());
+        return adminProfileResponseDto;
+        }
+
+   /* public AdminProfileResponseDto findUser(String token){
+        Optional<Long> userId = jwtTokenManager.getIdFromToken(token);
+        if (userId.isEmpty())
+            throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        Optional<User> userOptional = repository.findById(userId.get());
+        if (userOptional.isEmpty())
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        return AdminProfileResponseDto.builder()
+                .data(userOptional.get())
+                .message("Kullanıcı bilgileri getirildi")
+                .statusCode(200)
+                .build();
+    }*/
+
+
+
+
+
 
 }

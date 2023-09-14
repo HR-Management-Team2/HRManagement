@@ -3,6 +3,8 @@ package com.hrmanagement.controller;
 import com.hrmanagement.dto.request.EmployeeCreateRequestDto;
 import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
+import com.hrmanagement.dto.response.AdminProfileResponseDto;
+import com.hrmanagement.dto.response.UserResponseDto;
 import com.hrmanagement.repository.entity.User;
 import com.hrmanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -17,6 +19,7 @@ import static com.hrmanagement.constants.ApiUrls.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(USER_APP)
+@CrossOrigin("*")
 public class UserController {
     private final UserService userService;
 
@@ -55,4 +58,11 @@ public class UserController {
     public ResponseEntity<Boolean> addEmployee(EmployeeCreateRequestDto dto) {
         return ResponseEntity.ok(userService.addEmployee(dto));
     }
+
+    @GetMapping(FIND_USER)
+    public ResponseEntity<AdminProfileResponseDto> findByUserDto(@PathVariable Long authId){
+        return ResponseEntity.ok(userService.findUser(authId));
+    }
+
+
 }
