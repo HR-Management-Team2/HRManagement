@@ -201,6 +201,22 @@ public class AuthService extends ServiceManager<Auth, Long> {
         return 0L;
     }
 
+    public Boolean createAdmin(CreateAdminRequestDto dto){
+        Optional<Auth> auth = authRepository.findOptionalByEmail(dto.getEmail());
+        if (auth.isEmpty()){
+            Auth authAdmin = Auth.builder()
+                    .email(dto.getEmail())
+                    .password(dto.getPassword())
+                    .name(dto.getName())
+                    .surname(dto.getSurname())
+                    .status(EStatus.ACTIVE)
+                    .role(ERole.ADMIN)
+                    .build();
+            authRepository.save(authAdmin);
+        }else throw new AuthManagerException(ErrorType.EMAIL_DUPLICATE);
+        return true;
+    }
+
 
 
 }

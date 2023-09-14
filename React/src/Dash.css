@@ -1,0 +1,67 @@
+.paddingall{
+    text-align: center; /* İçeriği yatay olarak ortala */
+    height: 100%; /* Kartın yüksekliğini dolduracak şekilde ayarlar */
+    display: flex; /* İçeriği dikey olarak ortalamak için kullanıyoruz */
+    flex-direction: column; /* İçeriği dikey olarak sırala */
+    justify-content: center;
+}
+
+.paddingallchart{
+    text-align: center; /* İçeriği yatay olarak ortala */
+    
+    display: flex; /* İçeriği dikey olarak ortalamak için kullanıyoruz */
+    flex-direction: column; /* İçeriği dikey olarak sırala */
+    justify-content: center;
+}
+
+.countOf {
+    font-weight: 600;
+}
+
+.iconStyle{
+    text-align: center;
+}
+
+.gradient {
+    background: rgb(41, 146, 243);
+    background: linear-gradient(158deg, rgb(81, 142, 223) 0%, rgb(235, 237, 245) 100%);
+}
+
+.bgcolor {
+    padding-top: 2%;
+    min-height: 100vh;
+    background: #ECEFF1;
+    background: linear-gradient(158deg, rgb(224, 224, 224) 0%, rgb(233, 233, 233) 100%);
+}
+
+.maps {
+    padding: 10px;
+    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+    border-radius: 10px;
+    flex: 0.5;
+    background-color: #fafafe;
+    display: flex;
+    max-height: 350px;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    .company-cities {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1d3354;
+      text-align: center;
+    }
+  }
+
+  .barchart{
+    padding: 10px;
+    -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+    border-radius: 10px;
+    flex: 0.5;
+    background-color: #ffffff;
+    display: flex;
+    max-height: 365px;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
