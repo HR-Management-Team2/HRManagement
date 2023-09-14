@@ -4,4 +4,6 @@ include 'user-micro-service'
 include 'mail-micro-service'
 include 'company-micro-service'
 include 'config-server'
+include 'config-server-git'
+include 'api-gateway-service'
 

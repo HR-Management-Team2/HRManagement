@@ -14,4 +14,5 @@ public class ApiUrls {
 
     public static final String ACTIVATE_STATUS_MANAGER = "/activate-status/{id}";
     public static final String UPDATE_EMPLOYEE = "/update-employee";
+    public static final String CREATE_ADMIN = "/create-admin";
 }

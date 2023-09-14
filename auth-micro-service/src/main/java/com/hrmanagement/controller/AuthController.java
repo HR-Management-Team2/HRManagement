@@ -68,4 +68,9 @@ public class AuthController {
         return ResponseEntity.ok(authService.activateStatusManager(id));
     }
 
+    @PostMapping(CREATE_ADMIN)
+    public ResponseEntity<Boolean> createAdmin(@RequestBody CreateAdminRequestDto dto){
+        return ResponseEntity.ok(authService.createAdmin(dto));
+    }
+
 }
