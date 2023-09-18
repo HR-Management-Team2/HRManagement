@@ -87,7 +87,7 @@ export default function Register() {
 
   const doRegister = ()=>{
     
-    fetch('http://10.116.11.94:8080/api/v1/auth/register',{
+    fetch('http://34.155.188.71/auth/register',{
       method: 'POST',
       headers:{
         'Content-Type': 'application/json',

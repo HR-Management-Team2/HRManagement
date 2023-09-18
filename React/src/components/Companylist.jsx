@@ -66,7 +66,7 @@ const Companylist = () => {
 
     if (initialValues) {
       axios
-        .put(`http://10.116.1.183:9080/api/v1/company/update/${initialValues.taxNumber}`, {
+        .put(`http://34.155.188.71/company/update/${initialValues.taxNumber}`, {
           ...values
         })
         .then((res) => {
@@ -98,7 +98,7 @@ const Companylist = () => {
 
       axios({
         method: 'POST',
-        url: 'http://10.116.1.183:9080/api/v1/company/addcompany',
+        url: 'http://34.155.188.71/company/addcompany',
         headers: header,
         data: data
       }).then(result => {
@@ -131,7 +131,7 @@ const Companylist = () => {
     }
 
     axios
-      .delete(`http://10.116.1.183:9080/api/v1/company/delete/${taxNumber}`)
+      .delete(`http://34.155.188.71/company/delete/${taxNumber}`)
       .then((res) => {
         if (res.status === 200) {
           console.log("Company deleted successfully.");
@@ -202,7 +202,7 @@ const Companylist = () => {
   ];
 
   useEffect(() => {
-    axios.get("http://10.116.1.183:9080/api/v1/company/findall").then((res) => {
+    axios.get("http://34.155.188.71/company/findall").then((res) => {
       setCompanies(res.data);
     });
   }, []);

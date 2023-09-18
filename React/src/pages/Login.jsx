@@ -71,7 +71,7 @@ export default function Login() {
 
     axios({
       method: 'POST',
-      url: 'http://10.116.11.94:8080/api/v1/auth/login',
+      url: 'http://34.155.188.71/auth/login',
       headers: header,
       data: data
     }).then(result => {

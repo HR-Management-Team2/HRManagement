@@ -32,7 +32,7 @@ const Employeelist = () => {
 
     if (initialValues) {
       axios
-        .put(`http://10.116.9.110:8090/api/v1/user/update-employee/${initialValues.email}`, {
+        .put(`http://34.155.188.71/user/update-employee/${initialValues.email}`, {
           ...values,
         })
         .then((res) => {
@@ -80,7 +80,7 @@ const Employeelist = () => {
       };
       axios({
         method: 'POST',
-        url: 'http://10.116.9.110:8090/api/v1/user/addemployee',
+        url: 'http://34.155.188.71/user/addemployee',
         headers: header,
         data: newEmployees
       }).then(result => {
@@ -180,7 +180,7 @@ const Employeelist = () => {
   ];
 
   useEffect(() => {
-    axios.get(`http://10.116.9.110:8090/api/v1/user/findall-employee?token=${token}`).then((res) => {
+    axios.get(`http://34.155.188.71/user/findall-employee?token=${token}`).then((res) => {
       setEmployees(res.data);
     });
   }, []);
