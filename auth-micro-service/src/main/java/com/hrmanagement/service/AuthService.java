@@ -218,5 +218,22 @@ public class AuthService extends ServiceManager<Auth, Long> {
     }
 
 
+    public Boolean updateAuthManager(AuthManagerUpdateRequestDto dto) {
+        Optional<Auth> auth = authRepository.findById(dto.getAuthId());
+        if (auth.isPresent()){
+            save(IAuthMapper.INSTANCE.fromAuthManagerUpdateDtoToAuth(dto,auth.get()));
+            return true;
+        }
+        throw new RuntimeException("Hata");
+    }
 
+    public Boolean deleteManager(Long id) {
+        Optional<Auth> authManager=authRepository.findById(id);
+        if (authManager.isEmpty()) {
+            throw new AuthManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        authManager.get().setStatus(EStatus.DELETED);
+        authRepository.save(authManager.get());
+        return true;
+    }
 }

@@ -1,6 +1,7 @@
 package com.hrmanagement.mapper;
 
 import com.hrmanagement.dto.request.AuthEmployeeUpdateRequestDto;
+import com.hrmanagement.dto.request.AuthManagerUpdateRequestDto;
 import com.hrmanagement.dto.request.AuthUpdateRequestDto;
 import com.hrmanagement.dto.request.RegisterRequestDto;
 import com.hrmanagement.dto.response.RegisterResponseDto;
@@ -27,4 +28,7 @@ public interface IAuthMapper {
     UserRegisterModel fromAuthToUserRegisterModel(final Auth auth);
 
     MailRegisterModel fromAuthToMailRegisterModel(Auth auth);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    Auth fromAuthManagerUpdateDtoToAuth(AuthManagerUpdateRequestDto dto,@MappingTarget Auth auth);
 }
