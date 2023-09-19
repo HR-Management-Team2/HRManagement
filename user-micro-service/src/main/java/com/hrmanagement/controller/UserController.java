@@ -1,10 +1,8 @@
 package com.hrmanagement.controller;
 
-import com.hrmanagement.dto.request.EmployeeCreateRequestDto;
-import com.hrmanagement.dto.request.UpdateEmployeeRequestDto;
-import com.hrmanagement.dto.request.UserCreateRequestDto;
-import com.hrmanagement.dto.request.UserUpdateRequestDto;
+import com.hrmanagement.dto.request.*;
 import com.hrmanagement.dto.response.AdminProfileResponseDto;
+import com.hrmanagement.dto.response.ManagerListResponseDto;
 import com.hrmanagement.dto.response.UserResponseDto;
 import com.hrmanagement.dto.response.EmployeeListResponseDto;
 import com.hrmanagement.repository.entity.User;
@@ -77,5 +75,22 @@ public class UserController {
     public ResponseEntity<Boolean> updateEmployee(@RequestBody UpdateEmployeeRequestDto dto){
         return ResponseEntity.ok(userService.updateEmployee(dto));
     }
+    @CrossOrigin("*")
+    @GetMapping(FIND_ALL_MANAGER)
+    public ResponseEntity<List<ManagerListResponseDto>> findAllManager(){
+        return ResponseEntity.ok(userService.findAllManager());
+    }
+
+    @CrossOrigin("*")
+    @PutMapping(UPDATE_MANAGER)
+    public ResponseEntity<Boolean> updateManager(@RequestBody ManagerUpdateRequestDto dto){
+        return ResponseEntity.ok(userService.updateManager(dto));
+    }
+    @CrossOrigin("*")
+    @DeleteMapping(DELETE_MANAGER)
+    public ResponseEntity<Boolean> deleteManager(@PathVariable Long authId){
+        return ResponseEntity.ok(userService.deleteManager(authId));
+    }
+
 
 }
