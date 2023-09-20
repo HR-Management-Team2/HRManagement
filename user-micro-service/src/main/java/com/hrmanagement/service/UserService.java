@@ -177,6 +177,8 @@ public class UserService extends ServiceManager<User,String> {
             throw new UserManagerException(ErrorType.USER_NOT_FOUND);
         }
         Long idEmployee = employeeProducer.sendEmployeeAuth(CreateEmployee.builder()
+                .name(dto.getName())
+                .surname(dto.getSurname())
                 .email(dto.getEmail())
                 .companyName(user.get().getCompanyName())
                 .taxNo(user.get().getTaxNo()).build());
@@ -199,6 +201,7 @@ public class UserService extends ServiceManager<User,String> {
                         .salary(dto.getSalary())
                         .authId(idEmployee)
                         .role(ERole.EMPLOYEE)
+                        .status(EStatus.ACTIVE)
                         .build();
                 repository.save(employee);
         }

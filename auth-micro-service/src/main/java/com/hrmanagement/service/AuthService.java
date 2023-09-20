@@ -109,29 +109,6 @@ public class AuthService extends ServiceManager<Auth, Long> {
 
     }
 
-    /*@Transactional
-    public Boolean activateStatus(ActivateRequestDto dto) {
-        Optional<Auth> optionalAuth = findById(dto.getId());
-        if (optionalAuth.isEmpty()){
-            throw new AuthManagerException(ErrorType.USER_NOT_FOUND);
-        }
-        if(optionalAuth.get().getStatus().equals(EStatus.ACTIVE)){
-            throw new AuthManagerException(ErrorType.ALREADY_ACTIVE);
-        }
-        if (!optionalAuth.get().getStatus().equals(EStatus.PENDING)){
-            throw new AuthManagerException(ErrorType.USER_ACCESS_ERROR);
-        }
-        if(dto.getActivationCode().equals(optionalAuth.get().getActivationCode())){
-            optionalAuth.get().setStatus(EStatus.ACTIVE);
-            update(optionalAuth.get());
-            //userprofilemanager yazılıp daha sonra user'a gönderilecek bu kısımda
-            userManager.activateStatus(optionalAuth.get().getId());
-            return true;
-        }else {
-            throw new AuthManagerException(ErrorType.ACTIVATE_CODE_ERROR);
-        }
-    }*/
-
     public Boolean activateStatus(String token) {
         System.out.println("Activate status service metoduna gelen token: " + token);
         Optional<Long> authId = jwtTokenManager.getIdFromToken(token);
@@ -170,9 +147,6 @@ public class AuthService extends ServiceManager<Auth, Long> {
         });
         auth.get().setStatus(EStatus.ACTIVE);
         update(auth.get());
-        MailActivateModel model = new MailActivateModel();
-        model.setUserId(auth.get().getId());
-        activateProducer.sendActivateMail(model);
         return true;
 
     }
@@ -182,20 +156,20 @@ public class AuthService extends ServiceManager<Auth, Long> {
         Optional<Auth> auth = authRepository.findOptionalByEmail(createEmployee.getEmail());
         if (auth.isEmpty()) {
             Auth authWorker = Auth.builder()
+                    .name(createEmployee.getName())
+                    .surname(createEmployee.getSurname())
                     .email(createEmployee.getEmail())
                     .password(UUID.randomUUID().toString().substring(0, 8))
                     .companyName(createEmployee.getCompanyName())
                     .taxNo(createEmployee.getTaxNo())
                     .role(ERole.EMPLOYEE)
+                    .status(EStatus.ACTIVE)
                     .build();
             authRepository.save(authWorker);
             System.out.println(authWorker);
             System.out.println(authWorker.getId().toString());
-//            authProducer.sendPasswordAfterManagerCreate(MailManagerPassword.builder()
-//                    .mail(authWorker.getEmail())
-//                    .authid(authWorker.getId())
-//                    .password(authWorker.getPassword())
-//                    .build());
+            MailActivateModel model = IAuthMapper.INSTANCE.fromAuthToMailActivateModel(authWorker);
+            activateProducer.sendActivateMail(model);
             return authWorker.getId();
         }
         return 0L;
@@ -221,7 +195,12 @@ public class AuthService extends ServiceManager<Auth, Long> {
     public Boolean updateAuthManager(AuthManagerUpdateRequestDto dto) {
         Optional<Auth> auth = authRepository.findById(dto.getAuthId());
         if (auth.isPresent()){
-            save(IAuthMapper.INSTANCE.fromAuthManagerUpdateDtoToAuth(dto,auth.get()));
+            Auth authManager = IAuthMapper.INSTANCE.fromAuthManagerUpdateDtoToAuth(dto,auth.get());
+            authRepository.save(authManager);
+            if (auth.get().getStatus() == EStatus.ACTIVE) {
+                MailActivateModel activateModel = IAuthMapper.INSTANCE.fromAuthToMailActivateModel(authManager);
+                activateProducer.sendActivateMail(activateModel);
+            }
             return true;
         }
         throw new RuntimeException("Hata");

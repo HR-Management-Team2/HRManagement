@@ -9,7 +9,8 @@ import java.io.Serializable;
 @Builder
 @Data
 public class CreateEmployee implements Serializable {
-
+    String name;
+    String surname;
     String email;
     String companyName;
     String taxNo;
