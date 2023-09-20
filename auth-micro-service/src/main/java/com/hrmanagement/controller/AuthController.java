@@ -72,5 +72,13 @@ public class AuthController {
     public ResponseEntity<Boolean> createAdmin(@RequestBody CreateAdminRequestDto dto){
         return ResponseEntity.ok(authService.createAdmin(dto));
     }
+    @PutMapping(UPDATE_MANAGER)
+    public ResponseEntity<Boolean> updateAuthManager(@RequestBody AuthManagerUpdateRequestDto dto){
+        return ResponseEntity.ok(authService.updateAuthManager(dto));
+    }
+    @DeleteMapping(DELETE_MANAGER)
+    public ResponseEntity<Boolean> deleteAuthManager(@PathVariable Long id){
+        return ResponseEntity.ok(authService.deleteManager(id));
+    }
 
 }

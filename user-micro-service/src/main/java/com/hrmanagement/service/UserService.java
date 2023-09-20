@@ -8,6 +8,8 @@ import com.hrmanagement.dto.request.EmployeeCreateRequestDto;
 import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
 import com.hrmanagement.dto.response.AdminProfileResponseDto;
+import com.hrmanagement.dto.response.ManagerListResponseDto;
+import com.hrmanagement.dto.response.UserResponseDto;
 import com.hrmanagement.dto.request.*;
 import com.hrmanagement.dto.response.EmployeeListResponseDto;
 import com.hrmanagement.exceptions.ErrorType;
@@ -293,5 +295,39 @@ public class UserService extends ServiceManager<User,String> {
         return url;
     }
 
+
+    public List<ManagerListResponseDto> findAllManager() {
+        EStatus statusToDelete= EStatus.DELETED;
+        return repository.findAllByStatusNot(statusToDelete).stream().map(x->{
+            return ManagerListResponseDto.builder().authId(x.getAuthId()).name(x.getName()).surname(x.getSurname()).email(x.getEmail()).companyName(x.getCompanyName()).taxNo(x.getTaxNo()).status(x.getStatus())
+                    .build();
+        }).collect(Collectors.toList());
+    }
+    public Boolean updateManager(ManagerUpdateRequestDto dto)  {
+        User userManager=repository.findOptionalByAuthId(dto.getAuthId())
+                .orElseThrow(()->new UserManagerException(ErrorType.USER_NOT_FOUND));
+        userManager.setName(dto.getName());
+        userManager.setSurname(dto.getSurname());
+        userManager.setEmail(dto.getEmail());
+        userManager.setCompanyName(dto.getCompanyName());
+        userManager.setTaxNo(dto.getTaxNo());
+        userManager.setStatus(dto.getStatus());
+        repository.save(userManager);
+        AuthManagerUpdateRequestDto authManagerUpdateRequestDto=IUserMapper.INSTANCE.fromUserToAuthManagerUpdateRequestDto(userManager);
+        authManager.updateAuthManager(authManagerUpdateRequestDto);
+        return true;
+
+    }
+    @Transactional
+    public Boolean deleteManager(Long authId){
+        Optional<User> userManager=repository.findOptionalByAuthId(authId);
+        if(userManager.isEmpty()) {
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        userManager.get().setStatus(EStatus.DELETED);
+        repository.save(userManager.get());
+        authManager.deleteAuthManager(userManager.get().getAuthId());
+        return true;
+    }
 
 }
