@@ -15,6 +15,7 @@ public class ApiUrls {
     public static final String FIND_USER = "/find-by-user-dto/{authId}";
     public static final String FIND_ALL_EMPLOYEE = "/findall-employee";
     public static final String UPDATE_EMPLOYEE = "/update-employee/{email}";
+    public static final String IMAGE_UPLOAD = "/image-upload";
 
     public static final String FIND_ALL_MANAGER = "/findall-manager";
     public static final String UPDATE_MANAGER = "/update-manager/{authId}";

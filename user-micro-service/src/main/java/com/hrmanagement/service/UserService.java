@@ -1,5 +1,8 @@
 package com.hrmanagement.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.hrmanagement.config.CloudinaryConfig;
 import com.hrmanagement.dto.request.AuthUpdateRequestDto;
 import com.hrmanagement.dto.request.EmployeeCreateRequestDto;
 import com.hrmanagement.dto.request.UserCreateRequestDto;
@@ -25,8 +28,11 @@ import com.hrmanagement.utility.ServiceManager;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,13 +42,15 @@ public class UserService extends ServiceManager<User,String> {
     private final JwtTokenManager jwtTokenManager;
     private final IAuthManager authManager;
     private final EmployeeProducer employeeProducer;
+    private final CloudinaryConfig cloudinaryConfig;
 
-    public UserService(IUserRepository repository, JwtTokenManager jwtTokenManager, IAuthManager authManager, EmployeeProducer employeeProducer) {
+    public UserService(IUserRepository repository, JwtTokenManager jwtTokenManager, IAuthManager authManager, EmployeeProducer employeeProducer, CloudinaryConfig cloudinaryConfig) {
         super(repository);
         this.repository = repository;
         this.jwtTokenManager = jwtTokenManager;
         this.authManager = authManager;
         this.employeeProducer = employeeProducer;
+        this.cloudinaryConfig = cloudinaryConfig;
     }
 
     public Boolean createUser(UserRegisterModel model) {
@@ -258,6 +266,35 @@ public class UserService extends ServiceManager<User,String> {
         authManager.updateAuthEmployee(authEmployeeUpdateRequestDto);
         return true;
     }
+
+    public String imageUpload(MultipartFile file){
+        Map<String, String> config = new HashMap<>();
+        config.put("cloud_name", cloudinaryConfig.getCloud_name());
+        config.put("api_key", cloudinaryConfig.getApi_key());
+        config.put("api_secret", cloudinaryConfig.getApi_secret());
+
+        Cloudinary cloudinary = new Cloudinary(config);
+
+        try {
+            Map<?,?> result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String url = (String) result.get("url");
+            return url;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String updateImage(MultipartFile file, String token){
+        Long id = jwtTokenManager.getIdFromToken(token).get();
+        Optional<User> user = repository.findById(id);
+        if (user.isEmpty()){
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        String url = imageUpload(file);
+        return url;
+    }
+
 
     public List<ManagerListResponseDto> findAllManager() {
         EStatus statusToDelete= EStatus.DELETED;

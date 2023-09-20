@@ -9,9 +9,12 @@ import com.hrmanagement.repository.entity.User;
 import com.hrmanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.hrmanagement.constants.ApiUrls.*;
@@ -90,6 +93,12 @@ public class UserController {
     @DeleteMapping(DELETE_MANAGER)
     public ResponseEntity<Boolean> deleteManager(@PathVariable Long authId){
         return ResponseEntity.ok(userService.deleteManager(authId));
+    }
+
+
+    @PostMapping(IMAGE_UPLOAD)
+    public ResponseEntity<String> updateImage(@RequestParam("file")MultipartFile file, @RequestParam("token") String token) throws IOException {
+        return ResponseEntity.ok(userService.updateImage(file,token));
     }
 
 

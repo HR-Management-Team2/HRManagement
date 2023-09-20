@@ -39,6 +39,7 @@ public class User extends BaseEntity {
     @Builder.Default
     private EStatus status = EStatus.PENDING;
     private ERole role;
+    private String image;
 
 
 
