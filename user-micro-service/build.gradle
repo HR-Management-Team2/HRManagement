@@ -9,4 +9,5 @@ dependencies {
     implementation libs.springCloudConfigClient
     implementation libs.springBootRabbitMQ
     implementation libs.javaJWT
+    implementation libs.springCloudinary
 }
