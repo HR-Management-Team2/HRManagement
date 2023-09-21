@@ -96,10 +96,21 @@ public class UserController {
     }
 
 
+    @CrossOrigin("*")
     @PostMapping(IMAGE_UPLOAD)
     public ResponseEntity<String> updateImage(@RequestParam("file")MultipartFile file, @RequestParam("token") String token) throws IOException {
         return ResponseEntity.ok(userService.updateImage(file,token));
     }
+
+    @PostMapping(UPDATE_USER_INFO)
+    @CrossOrigin("*")
+    public ResponseEntity<Boolean> updateUserInfo(@RequestBody UpdateUserInfoRequestDto dto){
+        System.out.println("çalışıyor mu?");
+        return ResponseEntity.ok(userService.updateUserInfo(dto));
+    }
+
+
+
 
 
 }

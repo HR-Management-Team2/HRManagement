@@ -47,6 +47,13 @@ const AddManagersModal = ({
         labelCol={{ span: 8 }}
       >
         <Form.Item
+          name="authId"
+          label="authId"
+          rules={[{ required: true }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
           name="name"
           label="Name"
           rules={[{ required: true }]}
@@ -69,14 +76,14 @@ const AddManagersModal = ({
           <Input />
         </Form.Item>
         <Form.Item
-          name="companyname"
+          name="companyName"
           label="Company Name"
           rules={[{ required: true }]}
         >
           <Input />
         </Form.Item >
         <Form.Item
-          name="taxno"
+          name="taxNo"
           label="Tax Number"
           rules={[{ required: true }]}
         >
@@ -92,8 +99,8 @@ const AddManagersModal = ({
             onChange={(value) => onStatusChange(managers.id, value)} 
             style={{ width: 100 }}
           >
-            <Option value="Active">Active</Option>
-            <Option value="Passive">Passive</Option>
+            <Option value="ACTIVE">Active</Option>
+            <Option value="PENDING">Passive</Option>
           </Select>
         </Form.Item >
 

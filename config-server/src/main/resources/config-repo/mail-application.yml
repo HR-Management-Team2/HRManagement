@@ -12,8 +12,8 @@ spring:
   mail:
     # sunucu olarak kullanacağımız maili ifade eder.
     # kullanıcının mailine bir mail göndermek için sunucu görevi üstlenir.
-    username: javababoost8@gmail.com
-    password: ${emailpassword}
+    username: hrmanagementjavaboost@gmail.com
+    password: ymyghpkzqjogctcv
     host: smtp.gmail.com
     port: 587
     properties:

@@ -14,6 +14,8 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { useAppStore } from '../appStore';
+import { useNavigate } from "react-router-dom";
+
 
 const AppBar = styled(MuiAppBar, {
   })(({theme}) => ({
@@ -47,6 +49,13 @@ export default function Navbar() {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const history = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("TOKEN");
+    localStorage.removeItem("role");
+    history("/login");
+  };
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -66,7 +75,7 @@ export default function Navbar() {
     >
  
       <MenuItem onClick={handleMenuClose}>Account Settings</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
 

@@ -1,22 +1,18 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import bg from "./bg/signin.svg";
 import bgimg from "./bg/backimg.jpg";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import { useState, forwardRef } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import MuiAlert from "@mui/material/Alert";
 import Slide from "@mui/material/Slide";
 import { useNavigate } from "react-router-dom";
+import React from 'react';
 
 const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -51,6 +47,13 @@ export default function RegisterManager() {
   const vertical = "top";
   const horizontal = "right";
   const navigate = useNavigate();
+  const [name,setName] = React.useState('');
+  const [surname,setSurname] = React.useState('');
+  const [email,setEmail] = React.useState('');
+  const [password,setPassword] = React.useState('');
+  const [passwordConfirm,setPasswordConfirm] = React.useState('');
+  const [companyName,setCompanyName] = React.useState('');
+  const [taxNo,setTaxNo] = React.useState('');
 
   const handleSubmit = async (event) => {
     setOpen(true);
@@ -69,9 +72,43 @@ export default function RegisterManager() {
     return <Slide {...props} direction="left" />;
   }
 
+  const getName = (event) =>{
+    setName(event.target.value);
+  }
+
+  const getSurname = (event) =>{
+    setSurname(event.target.value);
+  }
+
+  const doRegister = ()=>{
+
+    fetch('http://34.155.188.71/auth/register-manager',{
+      method: 'POST',
+      headers:{
+        'Content-Type': 'application/json',
+        'Accept-Encoding': 'gzip;q=1.0, compress;q=0.5',
+      },
+      body: JSON.stringify({
+        "name": name,
+        "surname": surname,
+        "email": email,
+        "password": password,
+        "passwordConfirm": passwordConfirm,
+        "companyName": companyName,
+        "taxNo": taxNo
+      })
+    }).then(data=>data.json())
+        .catch(data=>{
+          console.log(data);
+        })
+
+
+  };
+
+
   return (
     <>
-      <Snackbar
+      {/*<Snackbar
         open={open}
         autoHideDuration={3000}
         onClose={handleClose}
@@ -81,7 +118,7 @@ export default function RegisterManager() {
         <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
           Failed! Enter correct username and password.
         </Alert>
-      </Snackbar>
+      </Snackbar>*/}
       <div
         style={{
           backgroundImage: `url(${bgimg})`,
@@ -131,7 +168,7 @@ export default function RegisterManager() {
                     >
                       <Grid container spacing={1}>
                         <Grid item xs={12} sx={{ ml: "3em", mr: "3em" }}>
-                          <TextField
+                          <TextField onChange={getName}
                             required
                             fullWidth
                             id="name"
@@ -141,7 +178,7 @@ export default function RegisterManager() {
                           />
                         </Grid>
                         <Grid item xs={12} sx={{ ml: "3em", mr: "3em" }}>
-                          <TextField
+                          <TextField onChange={getSurname}
                             required
                             fullWidth
                             id="surname"
@@ -151,7 +188,7 @@ export default function RegisterManager() {
                           />
                         </Grid>
                         <Grid item xs={12} sx={{ ml: "3em", mr: "3em" }}>
-                          <TextField
+                          <TextField onChange={(event)=>setEmail(event.target.value)}
                             required
                             fullWidth
                             id="email"
@@ -161,27 +198,27 @@ export default function RegisterManager() {
                           />
                         </Grid>
                         <Grid item xs={12} sx={{ ml: "3em", mr: "3em" }}>
-                          <TextField
+                          <TextField onChange={(event)=>setCompanyName(event.target.value)}
                             required
                             fullWidth
-                            id="companyname"
+                            id="companyName"
                             label="Company Name"
-                            name="companyname"
-                            autoComplete="companyname"
+                            name="companyName"
+                            autoComplete="companyName"
                           />
                         </Grid>
                         <Grid item xs={12} sx={{ ml: "3em", mr: "3em" }}>
-                          <TextField
+                          <TextField onChange={(event)=>setTaxNo(event.target.value)}
                             required
                             fullWidth
-                            id="taxno"
+                            id="taxNo"
                             label="Tax No"
-                            name="taxno"
-                            autoComplete="taxno"
+                            name="taxNo"
+                            autoComplete="taxNo"
                           />
                         </Grid>
                         <Grid item xs={12} sx={{ ml: "3em", mr: "3em" }}>
-                          <TextField
+                          <TextField onChange={(data)=> setPassword(data.target.value)}
                             required
                             fullWidth
                             name="password"
@@ -192,7 +229,7 @@ export default function RegisterManager() {
                           />
                         </Grid>
                         <Grid item xs={12} sx={{ ml: "3em", mr: "3em" }}>
-                          <TextField
+                          <TextField onChange={(data)=> setPasswordConfirm(data.target.value)}
                             required
                             fullWidth
                             name="confirmpassword"
@@ -204,7 +241,7 @@ export default function RegisterManager() {
                         </Grid>
                         
                         <Grid item xs={12} sx={{ ml: "5em", mr: "5em" }}>
-                          <Button
+                          <Button onClick={doRegister}
                             type="submit"
                             variant="contained"
                             fullWidth="true"

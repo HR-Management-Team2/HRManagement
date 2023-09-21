@@ -21,6 +21,7 @@ import EmployeeMyProfile from "./employeePanel/pages/EmployeeMyProfile";
 import MyExpense from "./employeePanel/pages/MyExpense";
 import MyAdvance from "./employeePanel/pages/MyAdvance";
 import MyPermission from "./employeePanel/pages/MyPermission";
+import NotFound from "./pages/NotFound";
 
 export default function App(){
 
@@ -51,6 +52,8 @@ export default function App(){
         <Route path="/myexpense" exact element={<MyExpense />} ></Route>
         <Route path="/myadvance" exact element={<MyAdvance />} ></Route>
         <Route path="/mypermission" exact element={<MyPermission />} ></Route>
+        <Route path="*" exact element={<NotFound />} ></Route>
+
       </Routes>
     </BrowserRouter>
     </>

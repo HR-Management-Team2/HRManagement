@@ -13,19 +13,22 @@ import jwt_decode from "jwt-decode";
 
 
 export default function Myprofile() {
-  const [isEditing, setIsEditing] = useState(false);
-  const [admin, setAdmin] = useState([]);
-
   const token = localStorage.getItem("TOKEN");
-  const decodedToken = jwt_decode(token);
-  const authId = decodedToken.authId;
+  let id;
 
+  try {
+    const decodedToken = jwt_decode(token);
+    id = decodedToken.id;
+  } catch (error) {
+    console.error("Token çözme hatası:", error);
+  }
 
-
+  const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
+    surname: "",
     email: "",
+    image: "",
   });
 
   const handleEditClick = () => {
@@ -45,36 +48,97 @@ export default function Myprofile() {
   };
 
   useEffect(() => {
-    axios.get(`http://10.116.9.110:8090/api/v1/user/find-by-user-dto/${authId}`,token,{
-        headers: {
+    if (id) {
+      axios
+        .get(`http://34.155.188.71/user/find-by-user-dto/${id}`, {
+          headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
-        }
-    })
-    .then((response) => {
-      const { firstName, lastName, email } = response.data;
-      setUserData({ firstName, lastName, email });
-    }).catch((error)=>{
-      console.log(error);
-    });
-  }, [authId, token]);
+            'Cache-Control': 'no-cache',
+          },
+          params: {
+            timestamp: new Date().getTime(),
+          },
+        })
+        .then((response) => {
+          const { name, surname, email, image } = response.data;
+          console.log('API Yanıtı:', response.data);
+          setUserData({ name, surname, email, image });
+          console.log('Kullanıcı Verisi:', userData);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [id, token]);
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`http://localhost:8090/api/v1/user/find-by-user-dto${authId}`, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     })
-  //     .then((response) => {
-  //       const { firstName, lastName, email } = response.data;
-  //       setUserData({ firstName, lastName, email });
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }, [authId, token]);
+
+  // const [selectedFile, setSelectedFile] = useState(null);
+  // const [profileImage, setProfileImage] = useState(
+  //   selectedFile ? URL.createObjectURL(selectedFile) : "/pages/bg/login.png"
+  // );
+
+  // const handleFileChange = (event) => {
+  //   setSelectedFile(event.target.files[0]);
+  //   if (event.target.files[0]) {
+  //     setProfileImage(URL.createObjectURL(event.target.files[0]));
+  //   }
+  // };
+
+  // const handleImageUpload = () => {
+  //   if (selectedFile) {
+  //     const formData = new FormData();
+  //     formData.append("file", selectedFile);
+
+  //     axios
+  //       .post("http://localhost:8090/api/v1/user/image-upload", formData, {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${token}`,
+  //           "Cache-Control": "no-cache",
+  //         },
+  //       })
+  //       .then((response) => {
+  //         console.log("Profil fotoğrafı yüklendi");
+  //       })
+  //       .catch((error) => {
+  //         console.error("Profil fotoğrafı yüklenirken hata oluştu:", error);
+  //       });
+  //   }
+  // };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      uploadProfileImage(file);
+    }
+  };
+
+  const uploadProfileImage = (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    axios
+      .post("http://34.155.188.71/user/image-upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+          "Cache-Control": "no-cache",
+        },
+      })
+      .then((response) => {
+        console.log("Profil fotoğrafı yüklendi");
+        setUserData({
+          ...userData,
+          image: response.data.image,
+        });
+      })
+      .catch((error) => {
+        console.error("Profil fotoğrafı yüklenirken hata oluştu:", error);
+      });
+  };
+
+
 
 
   const VisuallyHiddenInput = styled("input")`
@@ -99,33 +163,39 @@ export default function Myprofile() {
           <h1>My Profile</h1>
           {/* bunun yerine admin isim soyismi çekilse güzel olur */}
           <Avatar
-            alt="Remy Sharp"
-            src="\pages\bg\login.png"
-            sx={{ width: 150, height: 150, marginBottom: "20px" }}
+            alt="User Profile"
+            src={userData.image || "/assets/default-image.jpg"} 
+            style={{ width: 150, height: 150, marginBottom: "20px" }}
           />
+
           <Button
             component="label"
             variant="contained"
             startIcon={<CloudUploadIcon />}
-            href="#file-upload"
+            htmlFor="file-upload-input"
           >
             Upload a file
-            <VisuallyHiddenInput type="file" />
+            <VisuallyHiddenInput
+              id="file-upload-input"
+              type="file"
+              onChange={handleFileChange}
+            />
           </Button>
+
           {isEditing ? (
             <Box sx={{ marginTop: "50px" }}>
               <TextField
-                name="firstName"
+                name="name"
                 label="First Name"
-                value={userData.firstName}
+                value={userData.name}
                 onChange={handleChange}
                 fullWidth
                 sx={{ mb: 2 }}
               />
               <TextField
-                name="lastName"
+                name="surname"
                 label="Last Name"
-                value={userData.lastName}
+                value={userData.surname}
                 onChange={handleChange}
                 fullWidth
                 sx={{ mb: 2 }}
@@ -145,8 +215,8 @@ export default function Myprofile() {
               elevation={3}
               sx={{ padding: 2, mb: 2, maxWidth: "600px", marginTop: "30px" }}
             >
-              <p>First Name: {userData.firstName}</p>
-              <p>Last Name: {userData.lastName}</p>
+              <p>First Name: {userData.name}</p>
+              <p>Last Name: {userData.surname}</p>
               <p>Email: {userData.email}</p>
             </Paper>
           )}

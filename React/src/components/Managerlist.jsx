@@ -32,13 +32,13 @@ const Managerlist = () => {
 
     if (initialValues) {
       axios
-        .put(`http://localhost:5000/managers/${initialValues.id}`, {
+        .put(`http://34.155.188.71/user/update-manager/${initialValues.authId}`, {
           ...values
         })
         .then((res) => {
           setManagers((prevState) => {
             return prevState.map((u) => {
-              if (res.data.id === u.id) {
+              if (res.data.authId === u.authId) {
                 return {
                   ...res.data,
                 };
@@ -52,8 +52,8 @@ const Managerlist = () => {
         name: values.name,
         surname: values.surname,
         email: values.email,
-        companyname: values.companyname,
-        taxno: values.taxno,
+        companyname: values.companyName,
+        taxno: values.taxNo,
         status: values.status
       };
       axios.post("http://localhost:5000/managers", newManagers).then((res) => {
@@ -109,17 +109,17 @@ const Managerlist = () => {
   };
   
 
-  const onDeleteManager = (managerId) => {
-    if (!managerId) {
+  const onDeleteManager = (authId) => {
+    if (!authId) {
       console.error("Invalid Manager ID");
       return;
     }
   
     axios
-      .delete(`http://localhost:5000/managers/${managerId}`)
+      .delete(`34.155.188.71/user/delete-manager/${authId}`)
       .then((res) => {
         setManagers((prevState) =>
-          prevState.filter((manager) => manager.id !== managerId)
+          prevState.filter((manager) => manager.authId !== authId)
         );
       })
       .catch((error) => {
@@ -130,6 +130,11 @@ const Managerlist = () => {
   
   
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "authId",
+      key: "authId",
+    },
     {
       title: "Name",
       dataIndex: "name",
@@ -147,13 +152,13 @@ const Managerlist = () => {
     },
     {
       title: "Company Name",
-      dataIndex: "companyname",
-      key: "companyname",
+      dataIndex: "companyName",
+      key: "companyName",
     },
     {
       title: "Tax Number",
-      dataIndex: "taxno",
-      key: "taxno",
+      dataIndex: "taxNo",
+      key: "taxNo",
     },
     {
       title: "Status",
@@ -161,8 +166,8 @@ const Managerlist = () => {
       key: "status",
     },
     {
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "authId",
+      key: "authId",
       render: (cell, row) => {
         return (
           <>
@@ -176,7 +181,7 @@ const Managerlist = () => {
               type="danger"
               shape="circle"
               icon={<DeleteOutlined />}
-              onClick={() => onDeleteManager(row.id)} 
+              onClick={() => onDeleteManager(row.authId)} 
             />
           </>
         );
@@ -186,7 +191,7 @@ const Managerlist = () => {
   ];
 
   useEffect(() => {
-    axios.get("http://localhost:5000/managers").then((res) => {
+    axios.get("http://34.155.188.71/user/findall-manager").then((res) => {
       setManagers(res.data);
     });
   }, []);

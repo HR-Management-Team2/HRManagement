@@ -298,6 +298,22 @@ public class UserService extends ServiceManager<User,String> {
         return url;
     }
 
+    public Boolean updateUserInfo(UpdateUserInfoRequestDto dto){
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(dto.getToken());
+        if (authId.isEmpty()) throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isPresent()){
+            user.get().setName(dto.getName());
+            user.get().setSurname(dto.getSurname());
+            user.get().setEmail(dto.getEmail());
+            user.get().setImage(imageUpload(dto.getImage()));
+            update(user.get());
+            AuthEmployeeUpdateRequestDto authEmployeeUpdateRequestDto = IUserMapper.INSTANCE.fromUserToAuthEmployeeUpdateDto(user.get());
+            authManager.updateAuthEmployee(authEmployeeUpdateRequestDto);
+        }
+        return true;
+    }
+
 
     public List<ManagerListResponseDto> findAllManager() {
         EStatus statusToDelete= EStatus.DELETED;

@@ -1,23 +1,17 @@
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import bg from "./bg/signin.svg";
 import bgimg from "./bg/backimg.jpg";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import { useState, forwardRef } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import MuiAlert from "@mui/material/Alert";
 import Slide from "@mui/material/Slide";
 import { useNavigate, json } from "react-router-dom";
-import { Input } from "@mui/material";
 import React from 'react';
 
 
@@ -110,7 +104,7 @@ export default function Register() {
 
   return (
     <>
-      <Snackbar
+      {/*<Snackbar
         open={open}
         autoHideDuration={3000}
         onClose={handleClose}
@@ -120,7 +114,7 @@ export default function Register() {
         <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
           Failed! Enter correct username and password.
         </Alert>
-      </Snackbar>
+      </Snackbar>*/}
       <div
         style={{
           backgroundImage: `url(${bgimg})`,
