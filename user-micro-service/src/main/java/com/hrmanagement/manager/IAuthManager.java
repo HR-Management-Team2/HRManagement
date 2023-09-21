@@ -3,6 +3,7 @@ package com.hrmanagement.manager;
 import com.hrmanagement.dto.request.AuthEmployeeUpdateRequestDto;
 import com.hrmanagement.dto.request.AuthManagerUpdateRequestDto;
 import com.hrmanagement.dto.request.AuthUpdateRequestDto;
+import com.hrmanagement.dto.request.UpdateUserInfoRequestDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

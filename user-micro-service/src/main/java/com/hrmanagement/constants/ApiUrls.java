@@ -20,4 +20,6 @@ public class ApiUrls {
     public static final String FIND_ALL_MANAGER = "/findall-manager";
     public static final String UPDATE_MANAGER = "/update-manager/{authId}";
     public static final String DELETE_MANAGER = "/delete-manager/{authId}";
+    public static final String UPDATE_USER_INFO = "/update-user-info";
+
 }

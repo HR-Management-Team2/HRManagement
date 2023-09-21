@@ -120,7 +120,7 @@ export default function Login() {
 
   return (
     <>
-      <Snackbar
+      {/*<Snackbar
         open={open}
         autoHideDuration={3000}
         onClose={handleClose}
@@ -130,7 +130,7 @@ export default function Login() {
         <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
           Failed! Enter correct username and password.
         </Alert>
-      </Snackbar>
+      </Snackbar>*/}
       <div
         style={{
           backgroundImage: `url(${bgimg})`,
