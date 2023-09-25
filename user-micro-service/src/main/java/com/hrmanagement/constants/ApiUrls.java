@@ -21,4 +21,7 @@ public class ApiUrls {
     public static final String DELETE_MANAGER = "/delete-manager/{authId}";
     public static final String UPDATE_USER_INFO = "/update-user-info";
     public static final String ADVANCE_CREATE = "/advances-create";
+    public static final String PERMISSION_CREATE = "/permission-create";
+    public static final String PERMISSION_APPROVE = "/approve-permission";
+    public static final String FIND_ALL_PERMISSION = "/findall-permission-employee";
 }
