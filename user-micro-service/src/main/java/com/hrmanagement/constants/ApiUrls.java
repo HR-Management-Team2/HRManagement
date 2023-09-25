@@ -24,4 +24,5 @@ public class ApiUrls {
     public static final String PERMISSION_CREATE = "/permission-create";
     public static final String PERMISSION_APPROVE = "/approve-permission";
     public static final String FIND_ALL_PERMISSION = "/findall-permission-employee";
+    public static final String FIND_ALL_ADVANCES_EMPLOYEE = "/findall-employee-advances";
 }

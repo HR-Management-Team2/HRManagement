@@ -6,7 +6,6 @@ import com.hrmanagement.repository.entity.User;
 import com.hrmanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -112,6 +111,12 @@ public class UserController {
         return ResponseEntity.ok(userService.createAdvance(createAdvanceRequestDto));
     }
 
+    @CrossOrigin("*")
+    @GetMapping(FIND_ALL_ADVANCES_EMPLOYEE)
+    public ResponseEntity<List<AdvanceListResponseDto>> findAllAdvancesEmployee(String token){
+        return ResponseEntity.ok(userService.findAllAdvancesForEmployee(token));
+    }
+
     @PostMapping(PERMISSION_CREATE)
     @CrossOrigin("*")
     public ResponseEntity<?> createPermission(@RequestBody CreatePermissionRequestDto dto){
@@ -129,7 +134,6 @@ public class UserController {
     public ResponseEntity<List<PermissionResponseDto>> findAllPermissionForEmployee(String token){
         return ResponseEntity.ok(userService.findAllPermissionForEmployee(token));
     }
-
 
 
 
