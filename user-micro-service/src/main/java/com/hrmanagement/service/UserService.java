@@ -8,6 +8,7 @@ import com.hrmanagement.dto.request.EmployeeCreateRequestDto;
 import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
 import com.hrmanagement.dto.response.AdminProfileResponseDto;
+import com.hrmanagement.dto.response.AdvanceListResponseDto;
 import com.hrmanagement.dto.response.ManagerListResponseDto;
 import com.hrmanagement.dto.request.*;
 import com.hrmanagement.dto.response.EmployeeListResponseDto;
@@ -382,6 +383,27 @@ public class UserService extends ServiceManager<User,String> {
                 .build();
         advanceRepository.save(advance);
         return true;
+
+    }
+    public List<AdvanceListResponseDto> findAllAdvancesForEmployee (String token) {
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(token);
+        if (authId.isEmpty()) {
+            throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        }
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()) {
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        return advanceRepository.findAllByAuthId(authId.get()).stream().map(a->{
+            return AdvanceListResponseDto.builder()
+                    .advanceAmount(a.getAdvanceAmount())
+                    .advanceRequestType(a.getAdvanceRequestType())
+                    .replyDate(a.getReplyDate())
+                    .approvalStatus(a.getApprovalStatus())
+                    .description(a.getDescription())
+                    .currency(a.getCurrency()).build();
+        }).collect(Collectors.toList());
+
 
     }
 
