@@ -1,0 +1,5 @@
+package com.hrmanagement.repository.enums;
+
+public enum EPermissionType {
+    HOLIDAY,ANNUAL,SICK,MATERNITY_PATERNITY,EDUCATIONAL,HOME_RENOVATION,CHILDS_SCHOOL,SPECIAL,RELIGIOUS_HOLIDAY
+}

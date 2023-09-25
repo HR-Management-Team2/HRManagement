@@ -1,10 +1,7 @@
 package com.hrmanagement.controller;
 
 import com.hrmanagement.dto.request.*;
-import com.hrmanagement.dto.response.AdminProfileResponseDto;
-import com.hrmanagement.dto.response.ManagerListResponseDto;
-import com.hrmanagement.dto.response.UserResponseDto;
-import com.hrmanagement.dto.response.EmployeeListResponseDto;
+import com.hrmanagement.dto.response.*;
 import com.hrmanagement.repository.entity.User;
 import com.hrmanagement.service.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -115,6 +112,23 @@ public class UserController {
         return ResponseEntity.ok(userService.createAdvance(createAdvanceRequestDto));
     }
 
+    @PostMapping(PERMISSION_CREATE)
+    @CrossOrigin("*")
+    public ResponseEntity<?> createPermission(@RequestBody CreatePermissionRequestDto dto){
+        return ResponseEntity.ok(userService.createPermission(dto));
+    }
+
+    @CrossOrigin("*")
+    @PostMapping(PERMISSION_APPROVE)
+    public ResponseEntity<Boolean> updateStatusPermission(@RequestBody UpdateStatusRequestDto dto){
+        return ResponseEntity.ok(userService.updateStatusPermission(dto));
+    }
+
+    @CrossOrigin("*")
+    @GetMapping(FIND_ALL_PERMISSION)
+    public ResponseEntity<List<PermissionResponseDto>> findAllPermissionForEmployee(String token){
+        return ResponseEntity.ok(userService.findAllPermissionForEmployee(token));
+    }
 
 
 

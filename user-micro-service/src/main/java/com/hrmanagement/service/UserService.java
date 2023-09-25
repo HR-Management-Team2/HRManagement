@@ -11,16 +11,20 @@ import com.hrmanagement.dto.response.AdminProfileResponseDto;
 import com.hrmanagement.dto.response.ManagerListResponseDto;
 import com.hrmanagement.dto.request.*;
 import com.hrmanagement.dto.response.EmployeeListResponseDto;
+import com.hrmanagement.dto.response.PermissionResponseDto;
 import com.hrmanagement.exceptions.ErrorType;
 import com.hrmanagement.exceptions.UserManagerException;
 import com.hrmanagement.manager.IAuthManager;
+import com.hrmanagement.mapper.IPermissionMapper;
 import com.hrmanagement.mapper.IUserMapper;
 import com.hrmanagement.rabbitmq.model.CreateEmployee;
 import com.hrmanagement.rabbitmq.model.UserRegisterModel;
 import com.hrmanagement.rabbitmq.producer.EmployeeProducer;
 import com.hrmanagement.repository.IAdvanceRepository;
+import com.hrmanagement.repository.IPermissionRepository;
 import com.hrmanagement.repository.IUserRepository;
 import com.hrmanagement.repository.entity.Advance;
+import com.hrmanagement.repository.entity.Permission;
 import com.hrmanagement.repository.entity.User;
 import com.hrmanagement.repository.enums.ERole;
 import com.hrmanagement.repository.enums.EStatus;
@@ -32,10 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hrmanagement.repository.enums.EApprovalStatus.*;
@@ -44,15 +45,18 @@ import static com.hrmanagement.repository.enums.EApprovalStatus.*;
 public class UserService extends ServiceManager<User,String> {
     private final IUserRepository repository;
     private final IAdvanceRepository advanceRepository;
+    private final IPermissionRepository permissionRepository;
     private final JwtTokenManager jwtTokenManager;
     private final IAuthManager authManager;
     private final EmployeeProducer employeeProducer;
     private final CloudinaryConfig cloudinaryConfig;
 
-    public UserService(IUserRepository repository, IAdvanceRepository advanceRepository, JwtTokenManager jwtTokenManager, IAuthManager authManager, EmployeeProducer employeeProducer, CloudinaryConfig cloudinaryConfig) {
+    public UserService(IUserRepository repository, IAdvanceRepository advanceRepository, IPermissionRepository permissionRepository, JwtTokenManager jwtTokenManager,
+                       IAuthManager authManager, EmployeeProducer employeeProducer, CloudinaryConfig cloudinaryConfig) {
         super(repository);
         this.repository = repository;
         this.advanceRepository = advanceRepository;
+        this.permissionRepository = permissionRepository;
         this.jwtTokenManager = jwtTokenManager;
         this.authManager = authManager;
         this.employeeProducer = employeeProducer;
@@ -296,7 +300,7 @@ public class UserService extends ServiceManager<User,String> {
 
     public String updateImage(MultipartFile file, String token){
         Long id = jwtTokenManager.getIdFromToken(token).get();
-        Optional<User> user = repository.findById(id);
+        Optional<User> user = repository.findById(String.valueOf(id));
         if (user.isEmpty()){
             throw new UserManagerException(ErrorType.USER_NOT_FOUND);
         }
@@ -379,6 +383,51 @@ public class UserService extends ServiceManager<User,String> {
         advanceRepository.save(advance);
         return true;
 
+    }
+
+    public Boolean createPermission(CreatePermissionRequestDto dto){
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(dto.getToken());
+        if (authId.isEmpty()) throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()){
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        Permission permission = Permission.builder()
+                .ePermissionType(dto.getEPermissionType())
+                .dateOfRequest(LocalDate.now())
+                .nameEmployee(user.get().getName())
+                .surnameEmployee(user.get().getSurname())
+                .authId(user.get().getAuthId())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .approvalStatus(PENDING_APPROVAL)
+                .build();
+        permissionRepository.save(permission);
+        return true;
+    }
+
+    public Boolean updateStatusPermission(UpdateStatusRequestDto dto){
+        Optional<Permission> permission = permissionRepository.findById(dto.getId());
+        if (permission.isEmpty()){
+            throw new UserManagerException(ErrorType.REQUEST_NOT_FOUND);
+        }
+        permission.get().setApprovalStatus(dto.getApprovalStatus());
+        permission.get().setReplyDate(LocalDate.now());
+        permissionRepository.save(permission.get());
+        return true;
+    }
+
+    public List<PermissionResponseDto> findAllPermissionForEmployee(String token){
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(token);
+        List<Permission> permissions = permissionRepository.findOptionalByAuthId(authId.get());
+        if (permissions.isEmpty()){
+            throw new UserManagerException(ErrorType.REQUEST_NOT_FOUND);
+        }
+        List<PermissionResponseDto> responseDtos = new ArrayList<>();
+        for (Permission permission: permissions){
+            responseDtos.add(IPermissionMapper.INSTANCE.fromPermissionToResponseDto(permission));
+        }
+        return responseDtos;
     }
 
 
