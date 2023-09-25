@@ -9,7 +9,6 @@ import com.hrmanagement.dto.request.UserCreateRequestDto;
 import com.hrmanagement.dto.request.UserUpdateRequestDto;
 import com.hrmanagement.dto.response.AdminProfileResponseDto;
 import com.hrmanagement.dto.response.ManagerListResponseDto;
-import com.hrmanagement.dto.response.UserResponseDto;
 import com.hrmanagement.dto.request.*;
 import com.hrmanagement.dto.response.EmployeeListResponseDto;
 import com.hrmanagement.exceptions.ErrorType;
@@ -19,7 +18,9 @@ import com.hrmanagement.mapper.IUserMapper;
 import com.hrmanagement.rabbitmq.model.CreateEmployee;
 import com.hrmanagement.rabbitmq.model.UserRegisterModel;
 import com.hrmanagement.rabbitmq.producer.EmployeeProducer;
+import com.hrmanagement.repository.IAdvanceRepository;
 import com.hrmanagement.repository.IUserRepository;
+import com.hrmanagement.repository.entity.Advance;
 import com.hrmanagement.repository.entity.User;
 import com.hrmanagement.repository.enums.ERole;
 import com.hrmanagement.repository.enums.EStatus;
@@ -30,23 +31,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.hrmanagement.repository.enums.EApprovalStatus.*;
+
 @Service
 public class UserService extends ServiceManager<User,String> {
     private final IUserRepository repository;
+    private final IAdvanceRepository advanceRepository;
     private final JwtTokenManager jwtTokenManager;
     private final IAuthManager authManager;
     private final EmployeeProducer employeeProducer;
     private final CloudinaryConfig cloudinaryConfig;
 
-    public UserService(IUserRepository repository, JwtTokenManager jwtTokenManager, IAuthManager authManager, EmployeeProducer employeeProducer, CloudinaryConfig cloudinaryConfig) {
+    public UserService(IUserRepository repository, IAdvanceRepository advanceRepository, JwtTokenManager jwtTokenManager, IAuthManager authManager, EmployeeProducer employeeProducer, CloudinaryConfig cloudinaryConfig) {
         super(repository);
         this.repository = repository;
+        this.advanceRepository = advanceRepository;
         this.jwtTokenManager = jwtTokenManager;
         this.authManager = authManager;
         this.employeeProducer = employeeProducer;
@@ -348,5 +354,33 @@ public class UserService extends ServiceManager<User,String> {
         authManager.deleteAuthManager(userManager.get().getAuthId());
         return true;
     }
+
+    public Boolean createAdvance(CreateAdvanceRequestDto createAdvanceRequestDto) {
+
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(createAdvanceRequestDto.getToken());
+        if (authId.isEmpty()) throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()){
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        Advance advance = Advance.builder()
+                .advanceAmount(createAdvanceRequestDto.getAdvanceAmount())
+                .advanceRequestType(createAdvanceRequestDto.getAdvanceRequestType())
+                .dateOfRequest(LocalDate.now())
+                .currency(createAdvanceRequestDto.getCurrency())
+                .nameOfTheRequester(user.get().getName())
+                .surnameOfTheRequester(user.get().getSurname())
+                .authId(user.get().getAuthId())
+                .description(createAdvanceRequestDto.getDescription())
+                .approvalStatus(PENDING_APPROVAL)
+                .companyName(user.get().getCompanyName())
+                .taxNo(user.get().getTaxNo())
+                .build();
+        advanceRepository.save(advance);
+        return true;
+
+    }
+
+
 
 }

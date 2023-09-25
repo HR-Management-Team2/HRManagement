@@ -109,6 +109,12 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUserInfo(dto));
     }
 
+    @CrossOrigin("*")
+    @PostMapping(ADVANCE_CREATE)
+    public ResponseEntity<?> createAdvance(@RequestBody CreateAdvanceRequestDto createAdvanceRequestDto) {
+        return ResponseEntity.ok(userService.createAdvance(createAdvanceRequestDto));
+    }
+
 
 
 
