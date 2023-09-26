@@ -135,6 +135,30 @@ public class UserController {
         return ResponseEntity.ok(userService.findAllPermissionForEmployee(token));
     }
 
+    @PostMapping(EXPENSE_CREATE)
+    @CrossOrigin("*")
+    public ResponseEntity<Boolean> createExpense(@RequestBody CreateExpenseRequestDto dto){
+        return ResponseEntity.ok(userService.createExpense(dto));
+    }
+
+    @CrossOrigin("*")
+    @PostMapping(EXPENSE_APPROVE)
+    public ResponseEntity<Boolean> updateStatusExpense(@RequestBody UpdateStatusRequestDto dto){
+        return ResponseEntity.ok(userService.updateStatusExpense(dto));
+    }
+
+    @CrossOrigin("*")
+    @GetMapping(FIND_ALL_EXPENSE_EMPLOYEE)
+    public ResponseEntity<List<ExpenseResponseDto>> findAllExpenseForEmployee(String token){
+        return ResponseEntity.ok(userService.findAlleExpensesForEmployee(token));
+    }
+
+    @CrossOrigin("*")
+    @GetMapping(FIND_ALL_EXPENSE_MANAGER)
+    public ResponseEntity<List<ExpenseManagerResponseDto>> findAllExpenseForManager(String token){
+        return ResponseEntity.ok(userService.findAlleExpensesForManager(token));
+    }
+
 
 
 }
