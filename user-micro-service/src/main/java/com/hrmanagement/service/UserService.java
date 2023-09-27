@@ -18,9 +18,11 @@ import com.hrmanagement.rabbitmq.model.CreateEmployee;
 import com.hrmanagement.rabbitmq.model.UserRegisterModel;
 import com.hrmanagement.rabbitmq.producer.EmployeeProducer;
 import com.hrmanagement.repository.IAdvanceRepository;
+import com.hrmanagement.repository.IExpenseRepository;
 import com.hrmanagement.repository.IPermissionRepository;
 import com.hrmanagement.repository.IUserRepository;
 import com.hrmanagement.repository.entity.Advance;
+import com.hrmanagement.repository.entity.Expense;
 import com.hrmanagement.repository.entity.Permission;
 import com.hrmanagement.repository.entity.User;
 import com.hrmanagement.repository.enums.ERole;
@@ -44,17 +46,19 @@ public class UserService extends ServiceManager<User,String> {
     private final IUserRepository repository;
     private final IAdvanceRepository advanceRepository;
     private final IPermissionRepository permissionRepository;
+    private final IExpenseRepository expenseRepository;
     private final JwtTokenManager jwtTokenManager;
     private final IAuthManager authManager;
     private final EmployeeProducer employeeProducer;
     private final CloudinaryConfig cloudinaryConfig;
 
-    public UserService(IUserRepository repository, IAdvanceRepository advanceRepository, IPermissionRepository permissionRepository, JwtTokenManager jwtTokenManager,
+    public UserService(IUserRepository repository, IAdvanceRepository advanceRepository, IPermissionRepository permissionRepository, IExpenseRepository expenseRepository, JwtTokenManager jwtTokenManager,
                        IAuthManager authManager, EmployeeProducer employeeProducer, CloudinaryConfig cloudinaryConfig) {
         super(repository);
         this.repository = repository;
         this.advanceRepository = advanceRepository;
         this.permissionRepository = permissionRepository;
+        this.expenseRepository = expenseRepository;
         this.jwtTokenManager = jwtTokenManager;
         this.authManager = authManager;
         this.employeeProducer = employeeProducer;
@@ -533,6 +537,84 @@ public class UserService extends ServiceManager<User,String> {
         }).collect(Collectors.toList());
     }
 
+    public Boolean createExpense(CreateExpenseRequestDto createExpenseRequestDto) {
+
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(createExpenseRequestDto.getToken());
+        if (authId.isEmpty()) throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()){
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        Expense expense = Expense.builder()
+                .expenseAmount(createExpenseRequestDto.getExpenseAmount())
+                .expenseType(createExpenseRequestDto.getExpenseType())
+                .dateOfRequest(LocalDate.now())
+                .currency(createExpenseRequestDto.getCurrency())
+                .nameOfTheRequester(user.get().getName())
+                .surnameOfTheRequester(user.get().getSurname())
+                .authId(user.get().getAuthId())
+                .description(createExpenseRequestDto.getDescription())
+                .approvalStatus(PENDING_APPROVAL)
+                .companyName(user.get().getCompanyName())
+                .taxNo(user.get().getTaxNo())
+                .build();
+        expenseRepository.save(expense);
+        return true;
+
+    }
+    public List<ExpenseResponseDto> findAlleExpensesForEmployee (String token) {
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(token);
+        if (authId.isEmpty()) {
+            throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        }
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()) {
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        return expenseRepository.findAllByAuthId(authId.get()).stream().map(a->{
+            return ExpenseResponseDto.builder()
+                    .expenseAmount(a.getExpenseAmount())
+                    .expenseType(a.getExpenseType())
+                    .replyDate(a.getReplyDate())
+                    .approvalStatus(a.getApprovalStatus())
+                    .description(a.getDescription())
+                    .currency(a.getCurrency()).build();
+        }).collect(Collectors.toList());
 
 
+    }
+    public Boolean updateStatusExpense(UpdateStatusRequestDto dto){
+        Optional<Expense> expense = expenseRepository.findById(dto.getId());
+        if (expense.isEmpty()){
+            throw new UserManagerException(ErrorType.REQUEST_NOT_FOUND);
+        }
+        expense.get().setApprovalStatus(dto.getApprovalStatus());
+        expense.get().setReplyDate(LocalDate.now());
+        expenseRepository.save(expense.get());
+        return true;
+    }
+
+
+    public List<ExpenseManagerResponseDto> findAlleExpensesForManager(String token) {
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(token);
+        if (authId.isEmpty()) {
+            throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        }
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()) {
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        return expenseRepository.findAllByTaxNoAndCompanyName(user.get().getTaxNo(),user.get().getCompanyName()).stream().map(a->{
+            return ExpenseManagerResponseDto.builder()
+                    .id(a.getId())
+                    .nameOfTheRequester(a.getNameOfTheRequester())
+                    .surnameOfTheRequester(a.getSurnameOfTheRequester())
+                    .expenseAmount(a.getExpenseAmount())
+                    .expenseType(a.getExpenseType())
+                    .dateOfRequest(a.getDateOfRequest())
+                    .approvalStatus(a.getApprovalStatus())
+                    .description(a.getDescription())
+                    .currency(a.getCurrency()).build();
+        }).collect(Collectors.toList());
+    }
 }

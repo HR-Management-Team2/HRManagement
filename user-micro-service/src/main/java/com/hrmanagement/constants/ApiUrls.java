@@ -28,4 +28,8 @@ public class ApiUrls {
     public static final String FIND_ALL_PERMISSION_MANAGER = "/findall-permission-manager";
     public static final String FIND_ALL_ADVANCES_EMPLOYEE = "/findall-employee-advances";
     public static final String FIND_ALL_ADVANCES_MANAGER = "/findall-manager-advances";
+    public static final String EXPENSE_CREATE = "/expense-create";
+    public static final String EXPENSE_APPROVE = "/approve-expense";
+    public static final String FIND_ALL_EXPENSE_EMPLOYEE = "/findall-employee-expenses";
+    public static final String FIND_ALL_EXPENSE_MANAGER = "/findall-manager-expenses";
 }
