@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -407,6 +408,42 @@ public class UserService extends ServiceManager<User,String> {
 
     }
 
+    public List<AdvanceListManagerResponseDto> findAllAdvancesForManager (String token) {
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(token);
+        if (authId.isEmpty()) {
+            throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        }
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()) {
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        return advanceRepository.findAllByTaxNoAndCompanyName(user.get().getTaxNo(),user.get().getCompanyName()).stream().map(a->{
+            return AdvanceListManagerResponseDto.builder()
+                    .id(a.getId())
+                    .nameOfTheRequester(a.getNameOfTheRequester())
+                    .surnameOfTheRequester(a.getSurnameOfTheRequester())
+                    .advanceAmount(a.getAdvanceAmount())
+                    .advanceRequestType(a.getAdvanceRequestType())
+                    .dateOfRequest(a.getDateOfRequest())
+                    .approvalStatus(a.getApprovalStatus())
+                    .description(a.getDescription())
+                    .currency(a.getCurrency()).build();
+        }).collect(Collectors.toList());
+    }
+
+    public Boolean updateStatusAdvance(UpdateStatusRequestDto dto){
+        Optional<Advance> advance = advanceRepository.findById(dto.getId());
+        if (advance.isEmpty()){
+            throw new UserManagerException(ErrorType.REQUEST_NOT_FOUND);
+        }
+        advance.get().setApprovalStatus(dto.getApprovalStatus());
+        advance.get().setReplyDate(LocalDate.now());
+        advanceRepository.save(advance.get());
+        return true;
+    }
+
+
+
     public Boolean createPermission(CreatePermissionRequestDto dto){
         Optional<Long> authId = jwtTokenManager.getIdFromToken(dto.getToken());
         if (authId.isEmpty()) throw new UserManagerException(ErrorType.INVALID_TOKEN);
@@ -415,7 +452,7 @@ public class UserService extends ServiceManager<User,String> {
             throw new UserManagerException(ErrorType.USER_NOT_FOUND);
         }
         Permission permission = Permission.builder()
-                .ePermissionType(dto.getEPermissionType())
+                .epermissionType(dto.getEpermissionType())
                 .dateOfRequest(LocalDate.now())
                 .nameEmployee(user.get().getName())
                 .surnameEmployee(user.get().getSurname())
@@ -441,15 +478,63 @@ public class UserService extends ServiceManager<User,String> {
 
     public List<PermissionResponseDto> findAllPermissionForEmployee(String token){
         Optional<Long> authId = jwtTokenManager.getIdFromToken(token);
-        List<Permission> permissions = permissionRepository.findOptionalByAuthId(authId.get());
-        if (permissions.isEmpty()){
-            throw new UserManagerException(ErrorType.REQUEST_NOT_FOUND);
+        if (authId.isEmpty()) {
+            throw new UserManagerException(ErrorType.INVALID_TOKEN);
         }
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()) {
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        return permissionRepository.findOptionalByAuthId(user.get().getAuthId()).stream().map(a->{
+            return PermissionResponseDto.builder()
+                    .id(a.getId())
+                    .nameEmployee(a.getNameEmployee())
+                    .surnameEmployee(a.getSurnameEmployee())
+                    .epermissionType(a.getEpermissionType())
+                    .startDate(a.getStartDate())
+                    .endDate(a.getEndDate())
+                    .dateOfRequest(a.getDateOfRequest())
+                    .approvalStatus(a.getApprovalStatus())
+                    .replyDate(a.getReplyDate())
+                    .days(calculatePermissionDays(a.getStartDate(),a.getEndDate()))
+                    .build();
+        }).collect(Collectors.toList());
+        /*Optional<Long> authId = jwtTokenManager.getIdFromToken(token);
+        List<Permission> permissions = permissionRepository.findOptionalByAuthId(authId.get());
         List<PermissionResponseDto> responseDtos = new ArrayList<>();
         for (Permission permission: permissions){
             responseDtos.add(IPermissionMapper.INSTANCE.fromPermissionToResponseDto(permission));
         }
-        return responseDtos;
+        return responseDtos;*/
+    }
+
+    private static int calculatePermissionDays(LocalDate startDate, LocalDate endDate) {
+        return (int) ChronoUnit.DAYS.between(startDate, endDate) + 1;
+    }
+
+
+    public List<PermissionListManagerResponseDto> findAllPermissionsForManager (String token) {
+        Optional<Long> authId = jwtTokenManager.getIdFromToken(token);
+        if (authId.isEmpty()) {
+            throw new UserManagerException(ErrorType.INVALID_TOKEN);
+        }
+        Optional<User> user = repository.findOptionalByAuthId(authId.get());
+        if (user.isEmpty()) {
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        return permissionRepository.findAllByTaxNoAndCompanyName(user.get().getTaxNo(),user.get().getCompanyName()).stream().map(a->{
+            return PermissionListManagerResponseDto.builder()
+                    .id(a.getId())
+                    .nameEmployee(a.getNameEmployee())
+                    .surnameEmployee(a.getSurnameEmployee())
+                    .epermissionType(a.getEpermissionType())
+                    .dateOfRequest(a.getDateOfRequest())
+                    .approvalStatus(a.getApprovalStatus())
+                    .startDate(a.getStartDate())
+                    .endDate(a.getEndDate())
+                    .days(calculatePermissionDays(a.getStartDate(),a.getEndDate()))
+                    .build();
+        }).collect(Collectors.toList());
     }
 
     public Boolean createExpense(CreateExpenseRequestDto createExpenseRequestDto) {

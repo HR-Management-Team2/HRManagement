@@ -22,7 +22,7 @@ public class Permission extends BaseEntity {
     Long authId;
     String nameEmployee;
     String surnameEmployee;
-    EPermissionType ePermissionType;
+    EPermissionType epermissionType;
     LocalDate dateOfRequest;
     LocalDate startDate;
     LocalDate endDate;
@@ -30,4 +30,5 @@ public class Permission extends BaseEntity {
     EApprovalStatus approvalStatus;
     String taxNo;
     String companyName;
+    int days;
 }

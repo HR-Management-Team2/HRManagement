@@ -19,7 +19,7 @@ public class PermissionResponseDto {
     Long authId;
     String nameEmployee;
     String surnameEmployee;
-    EPermissionType permissionType;
+    EPermissionType epermissionType;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate startDate;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -29,4 +29,5 @@ public class PermissionResponseDto {
     EApprovalStatus approvalStatus;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate replyDate;
+    int days;
 }

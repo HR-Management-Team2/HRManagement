@@ -1,11 +1,11 @@
-package com.hrmanagement.dto.request;
+package com.hrmanagement.dto.response;
 
+import com.hrmanagement.repository.enums.EApprovalStatus;
 import com.hrmanagement.repository.enums.EPermissionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -13,12 +13,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @Data
-public class CreatePermissionRequestDto {
-    String token;
+public class PermissionListManagerResponseDto {
+    String id;
+    String nameEmployee;
+    String surnameEmployee;
     EPermissionType epermissionType;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    LocalDate startDate;
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    LocalDate endDate;
     LocalDate dateOfRequest;
+    LocalDate startDate;
+    LocalDate endDate;
+    EApprovalStatus approvalStatus;
+    int days;
 }
