@@ -117,6 +117,18 @@ public class UserController {
         return ResponseEntity.ok(userService.findAllAdvancesForEmployee(token));
     }
 
+    @CrossOrigin("*")
+    @GetMapping(FIND_ALL_ADVANCES_MANAGER)
+    public ResponseEntity<List<AdvanceListManagerResponseDto>> findAllAdvancesManager(String token){
+        return ResponseEntity.ok(userService.findAllAdvancesForManager(token));
+    }
+
+    @CrossOrigin("*")
+    @PutMapping(ADVANCE_APPROVE)
+    public ResponseEntity<Boolean> updateStatusAdvance(@RequestBody UpdateStatusRequestDto dto){
+        return ResponseEntity.ok(userService.updateStatusAdvance(dto));
+    }
+
     @PostMapping(PERMISSION_CREATE)
     @CrossOrigin("*")
     public ResponseEntity<?> createPermission(@RequestBody CreatePermissionRequestDto dto){
@@ -124,15 +136,21 @@ public class UserController {
     }
 
     @CrossOrigin("*")
-    @PostMapping(PERMISSION_APPROVE)
+    @PutMapping(PERMISSION_APPROVE)
     public ResponseEntity<Boolean> updateStatusPermission(@RequestBody UpdateStatusRequestDto dto){
         return ResponseEntity.ok(userService.updateStatusPermission(dto));
     }
 
     @CrossOrigin("*")
-    @GetMapping(FIND_ALL_PERMISSION)
+    @GetMapping(FIND_ALL_PERMISSION_EMPLOYEE)
     public ResponseEntity<List<PermissionResponseDto>> findAllPermissionForEmployee(String token){
         return ResponseEntity.ok(userService.findAllPermissionForEmployee(token));
+    }
+
+    @CrossOrigin("*")
+    @GetMapping(FIND_ALL_PERMISSION_MANAGER)
+    public ResponseEntity<List<PermissionListManagerResponseDto>> findAllPermissionsForManager(String token){
+        return ResponseEntity.ok(userService.findAllPermissionsForManager(token));
     }
 
 

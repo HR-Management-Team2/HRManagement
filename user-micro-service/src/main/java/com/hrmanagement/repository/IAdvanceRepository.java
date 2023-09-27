@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface IAdvanceRepository extends MongoRepository<Advance, String> {
     List<Advance> findAllByAuthId(Long authId);
+    List<Advance> findAllByTaxNoAndCompanyName(String taxNo, String companyName);
 }

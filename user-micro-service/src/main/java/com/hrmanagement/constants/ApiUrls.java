@@ -22,7 +22,10 @@ public class ApiUrls {
     public static final String UPDATE_USER_INFO = "/update-user-info";
     public static final String ADVANCE_CREATE = "/advances-create";
     public static final String PERMISSION_CREATE = "/permission-create";
-    public static final String PERMISSION_APPROVE = "/approve-permission";
-    public static final String FIND_ALL_PERMISSION = "/findall-permission-employee";
+    public static final String PERMISSION_APPROVE = "/approve-permission/{id}";
+    public static final String ADVANCE_APPROVE = "/approve-advance/{id}";
+    public static final String FIND_ALL_PERMISSION_EMPLOYEE = "/findall-permission-employee";
+    public static final String FIND_ALL_PERMISSION_MANAGER = "/findall-permission-manager";
     public static final String FIND_ALL_ADVANCES_EMPLOYEE = "/findall-employee-advances";
+    public static final String FIND_ALL_ADVANCES_MANAGER = "/findall-manager-advances";
 }
