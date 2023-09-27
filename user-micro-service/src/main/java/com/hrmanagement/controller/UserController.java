@@ -151,6 +151,7 @@ public class UserController {
     @GetMapping(FIND_ALL_PERMISSION_MANAGER)
     public ResponseEntity<List<PermissionListManagerResponseDto>> findAllPermissionsForManager(String token){
         return ResponseEntity.ok(userService.findAllPermissionsForManager(token));
+    }
 
     @PostMapping(EXPENSE_CREATE)
     @CrossOrigin("*")
@@ -159,7 +160,7 @@ public class UserController {
     }
 
     @CrossOrigin("*")
-    @PostMapping(EXPENSE_APPROVE)
+    @PutMapping(EXPENSE_APPROVE)
     public ResponseEntity<Boolean> updateStatusExpense(@RequestBody UpdateStatusRequestDto dto){
         return ResponseEntity.ok(userService.updateStatusExpense(dto));
     }

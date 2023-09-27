@@ -460,6 +460,8 @@ public class UserService extends ServiceManager<User,String> {
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
                 .approvalStatus(PENDING_APPROVAL)
+                .companyName(user.get().getCompanyName())
+                .taxNo(user.get().getTaxNo())
                 .build();
         permissionRepository.save(permission);
         return true;
