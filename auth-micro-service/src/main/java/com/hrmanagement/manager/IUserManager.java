@@ -1,4 +1,5 @@
 package com.hrmanagement.manager;
+import com.hrmanagement.dto.request.PricingDatesRequestDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,5 +10,8 @@ public interface IUserManager {
 
     @PostMapping("/activate-status")
     public ResponseEntity<Boolean> activateStatus(@RequestHeader(value = "Authorization") String token);
+
+    @PostMapping("/pricing-dates")
+    public ResponseEntity<Boolean> pricingDates(@RequestBody PricingDatesRequestDto dto);
 
 }

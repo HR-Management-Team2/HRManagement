@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,5 +35,7 @@ public class Auth extends BaseEntity{
     private EStatus status = EStatus.PENDING;
     String taxNo;
     String companyName;
+    LocalDate startDate;
+    LocalDate endDate;
 
 }

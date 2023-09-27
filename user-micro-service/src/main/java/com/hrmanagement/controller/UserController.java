@@ -178,6 +178,12 @@ public class UserController {
 
     }
 
+    @Hidden
+    @PostMapping(PRICING_DATES)
+    public ResponseEntity<Boolean> pricingDates(@RequestBody PricingDatesRequestDto dto){
+        return ResponseEntity.ok(userService.setPricingDates(dto));
+    }
+
 
 
 }

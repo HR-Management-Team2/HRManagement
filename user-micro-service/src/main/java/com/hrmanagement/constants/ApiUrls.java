@@ -32,4 +32,5 @@ public class ApiUrls {
     public static final String EXPENSE_APPROVE = "/approve-expense";
     public static final String FIND_ALL_EXPENSE_EMPLOYEE = "/findall-employee-expenses";
     public static final String FIND_ALL_EXPENSE_MANAGER = "/findall-manager-expenses";
+    public static final String PRICING_DATES = "/pricing-dates";
 }

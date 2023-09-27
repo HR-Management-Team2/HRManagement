@@ -17,4 +17,5 @@ public class ApiUrls {
     public static final String CREATE_ADMIN = "/create-admin";
     public static final String UPDATE_MANAGER = "/update-manager";
     public static final String DELETE_MANAGER = "/delete-manager/{id}";
+    public static final String PRICING_MANAGER = "/pricing-manager";
 }

@@ -80,5 +80,9 @@ public class AuthController {
     public ResponseEntity<Boolean> deleteAuthManager(@PathVariable Long id){
         return ResponseEntity.ok(authService.deleteManager(id));
     }
+    @PostMapping(PRICING_MANAGER)
+    public ResponseEntity<Boolean> pricingManager(@RequestBody PricingRequestDto pricingRequestDto) {
+        return ResponseEntity.ok(authService.pricingManager(pricingRequestDto));
+    }
 
 }

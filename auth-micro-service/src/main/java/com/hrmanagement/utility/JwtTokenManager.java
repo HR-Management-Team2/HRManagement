@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.hrmanagement.repository.enums.ERole;
+import com.hrmanagement.repository.enums.EStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -18,7 +19,7 @@ public class JwtTokenManager {
     String audience = "hrmanagement";
     String issuer = "bilgeadam";
 
-    public Optional<String> createToken(Long id, ERole eRole){
+    public Optional<String> createToken(Long id, ERole eRole, EStatus eStatus){
         try {
             String token;
             token = JWT.create()
@@ -28,6 +29,7 @@ public class JwtTokenManager {
                     .withExpiresAt(new Date(System.currentTimeMillis() + exDate))
                     .withClaim("id",id)
                     .withClaim("role",eRole.toString())
+                    .withClaim("status",eStatus.toString())
                     .sign(Algorithm.HMAC512(secretKey));
             return Optional.of(token);
         }catch (Exception e){

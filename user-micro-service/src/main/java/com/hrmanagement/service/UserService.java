@@ -154,6 +154,17 @@ public class UserService extends ServiceManager<User,String> {
         }
     }
 
+    public Boolean setPricingDates(PricingDatesRequestDto pricingDatesRequestDto){
+        Optional<User> optionalUser=repository.findOptionalByAuthId(pricingDatesRequestDto.getAuthId());
+        if (optionalUser.isEmpty()){
+            throw new UserManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        optionalUser.get().setStartDate(pricingDatesRequestDto.getStartDate());
+        optionalUser.get().setEndDate(pricingDatesRequestDto.getEndDate());
+        repository.save(optionalUser.get());
+        return true;
+    }
+
 //    public Boolean createEmployee(EmployeeCreateRequestDto dto){
 //        User user = User.builder()
 //                .name(dto.getName())
