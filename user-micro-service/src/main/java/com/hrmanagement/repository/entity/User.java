@@ -34,8 +34,8 @@ public class User extends BaseEntity {
     private String taxNo;
     private String occupation;
     private Double salary;
-    private LocalDate start_date;
-    private LocalDate end_date;
+    private LocalDate startDate;
+    private LocalDate endDate;
     @Builder.Default
     private EStatus status = EStatus.PENDING;
     private ERole role;

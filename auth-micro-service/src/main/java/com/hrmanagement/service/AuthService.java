@@ -22,6 +22,7 @@ import com.hrmanagement.utility.JwtTokenManager;
 import com.hrmanagement.utility.ServiceManager;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -56,7 +57,7 @@ public class AuthService extends ServiceManager<Auth, Long> {
             userRegisterProducer.sendNewUser(IAuthMapper.INSTANCE.fromAuthToUserRegisterModel(auth));
             // user'a mailsender bu kısma eklenecek.
             //link için
-            String token = jwtTokenManager.createToken(auth.getId(), auth.getRole()).get();
+            String token = jwtTokenManager.createToken(auth.getId(), auth.getRole(),auth.getStatus()).get();
             mailRegisterProducer.sendActivationCode(MailRegisterModel.builder()
                     .name(auth.getName())
                     .surname(auth.getSurname())
@@ -95,19 +96,50 @@ public class AuthService extends ServiceManager<Auth, Long> {
     public LoginResponseDto doLogin(LoginRequestDto dto){
         Optional<Auth> auth = authRepository.findOptionalByEmailAndPassword(dto.getEmail(),dto.getPassword());
         if (auth.isEmpty()) throw new AuthManagerException(ErrorType.LOGIN_ERROR);
-        if(!auth.get().getStatus().equals(EStatus.ACTIVE)){
+        /*if(!auth.get().getStatus().equals(EStatus.ACTIVE)){
             throw new AuthManagerException(ErrorType.ACCOUNT_NOT_ACTIVE);
+        }*/
+        if (auth.get().getStartDate()!=null && auth.get().getEndDate()!=null) {
+            LocalDate datenow = LocalDate.now();
+            if (datenow.isBefore(auth.get().getStartDate()) || datenow.isAfter(auth.get().getEndDate())) {
+                auth.get().setStatus(EStatus.PENDING);
+                authRepository.save(auth.get());
+            }
         }
-        Optional<String> token = jwtTokenManager.createToken(auth.get().getId(),auth.get().getRole());
+        Optional<String> token = jwtTokenManager.createToken(auth.get().getId(),auth.get().getRole(),auth.get().getStatus());
         if (token.isEmpty()) throw new AuthManagerException(ErrorType.BAD_REQUEST);
         LoginResponseDto loginResponseDto = LoginResponseDto.builder()
                 .role(auth.get().getRole())
                 .token(token.get())
                 .authId(auth.get().getId())
+                .status(auth.get().getStatus())
                 .build();
         return loginResponseDto;
 
     }
+
+    public Boolean pricingManager(PricingRequestDto pricingRequestDto) {
+        Optional<Long> id = jwtTokenManager.getIdFromToken(pricingRequestDto.getToken());
+        if (id.isEmpty()) {
+            throw new AuthManagerException(ErrorType.INVALID_TOKEN);
+        }
+        Optional<Auth> auth = authRepository.findOptionalById(id.get());
+        if (auth.isEmpty()) {
+            throw new AuthManagerException(ErrorType.USER_NOT_FOUND);
+        }
+        LocalDate startDate=LocalDate.now();
+        LocalDate endDate=startDate.plusDays(pricingRequestDto.getAccountDay());
+        auth.get().setStartDate(startDate);
+        auth.get().setEndDate(endDate);
+        authRepository.save(auth.get());
+        PricingDatesRequestDto pricingDatesRequestDto=PricingDatesRequestDto.builder()
+                .authId(auth.get().getId())
+                .startDate(auth.get().getStartDate())
+                .endDate(auth.get().getEndDate()).build();
+        userManager.pricingDates(pricingDatesRequestDto);
+        return true;
+    }
+
 
     public Boolean activateStatus(String token) {
         System.out.println("Activate status service metoduna gelen token: " + token);
