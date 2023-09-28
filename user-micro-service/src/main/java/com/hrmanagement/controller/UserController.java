@@ -91,6 +91,12 @@ public class UserController {
         return ResponseEntity.ok(userService.deleteManager(authId));
     }
 
+    @CrossOrigin("*")
+    @DeleteMapping(DELETE_EMPLOYEE)
+    public ResponseEntity<Boolean> deleteEmployee(@PathVariable String email){
+        return ResponseEntity.ok(userService.deleteEmployee(email));
+    }
+
 
     @CrossOrigin("*")
     @PostMapping(IMAGE_UPLOAD)

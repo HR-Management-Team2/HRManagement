@@ -1,5 +1,6 @@
 package com.hrmanagement.service;
 
+import com.hrmanagement.dto.request.CheckCompanyRequestDto;
 import com.hrmanagement.dto.request.CreateCompanyRequestDto;
 import com.hrmanagement.dto.request.TokenDto;
 import com.hrmanagement.dto.request.UpdateCompanyRequestDto;
@@ -33,11 +34,19 @@ public class CompanyService extends ServiceManager<Company, String> {
     }
     @Transactional
     public Boolean createCompany(CreateCompanyRequestDto dto) {
-        if (companyRepository.existsByTaxNumber(dto.getTaxNumber())) {
-            throw new CompanyException(ErrorType.DUPLICATE_TAX_NUMBER);
+        if (companyRepository.existsByTaxNumberOrName(dto.getTaxNumber(), dto.getName())) {
+            throw new CompanyException(ErrorType.COMPANY_HAS_BEEN);
         }
         Company company = iSetCompanyMapper.toCompany(dto);
         save(company);
+        return true;
+    }
+
+    public Boolean checkCompany(CheckCompanyRequestDto dto){
+        Optional<Company> company = companyRepository.findByTaxNumberAndName(dto.getTaxNumber(), dto.getName());
+        if (company.isEmpty()){
+            throw new CompanyException(ErrorType.COMPANY_NOT_FOUND);
+        }
         return true;
     }
 

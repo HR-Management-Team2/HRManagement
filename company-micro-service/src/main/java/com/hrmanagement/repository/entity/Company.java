@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import nonapi.io.github.classgraph.json.Id;
+
 import java.time.LocalDate;
 
 @Data

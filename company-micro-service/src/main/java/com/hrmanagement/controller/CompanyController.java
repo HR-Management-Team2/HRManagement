@@ -1,9 +1,11 @@
 package com.hrmanagement.controller;
 
+import com.hrmanagement.dto.request.CheckCompanyRequestDto;
 import com.hrmanagement.dto.request.CreateCompanyRequestDto;
 import com.hrmanagement.dto.request.UpdateCompanyRequestDto;
 import com.hrmanagement.repository.entity.Company;
 import com.hrmanagement.service.CompanyService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,11 @@ public class CompanyController {
         return ResponseEntity.ok(companyService.deleteCompany(taxNumber));
     }
 
+    @Hidden
+    @PostMapping(CHECKCOMPANY)
+    public ResponseEntity<Boolean> checkCompany(@RequestBody CheckCompanyRequestDto dto){
+        return ResponseEntity.ok(companyService.checkCompany(dto));
+    }
 
 
 }

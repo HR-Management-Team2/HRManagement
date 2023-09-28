@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -19,4 +21,5 @@ public class ManagerListResponseDto {
     private String companyName;
     private String taxNo;
     private EStatus status;
+    private LocalDate endDate;
 }

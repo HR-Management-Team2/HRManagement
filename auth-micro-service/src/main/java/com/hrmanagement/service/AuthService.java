@@ -5,6 +5,7 @@ import com.hrmanagement.dto.response.LoginResponseDto;
 import com.hrmanagement.dto.response.RegisterResponseDto;
 import com.hrmanagement.exception.AuthManagerException;
 import com.hrmanagement.exception.ErrorType;
+import com.hrmanagement.manager.ICompanyManager;
 import com.hrmanagement.manager.IUserManager;
 import com.hrmanagement.mapper.IAuthMapper;
 import com.hrmanagement.rabbitmq.model.CreateEmployee;
@@ -33,16 +34,18 @@ public class AuthService extends ServiceManager<Auth, Long> {
     private final UserRegisterProducer userRegisterProducer;
     private final MailRegisterProducer mailRegisterProducer;
     private final IUserManager userManager;
+    private final ICompanyManager companyManager;
     private final MailActivateProducer activateProducer;
 
 
-    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, UserRegisterProducer userRegisterProducer, MailRegisterProducer mailRegisterProducer, IUserManager userManager, MailActivateProducer activateProducer) {
+    public AuthService(IAuthRepository authRepository, JwtTokenManager jwtTokenManager, UserRegisterProducer userRegisterProducer, MailRegisterProducer mailRegisterProducer, IUserManager userManager, ICompanyManager companyManager, MailActivateProducer activateProducer) {
         super(authRepository);
         this.authRepository = authRepository;
         this.jwtTokenManager = jwtTokenManager;
         this.userRegisterProducer = userRegisterProducer;
         this.mailRegisterProducer = mailRegisterProducer;
         this.userManager = userManager;
+        this.companyManager = companyManager;
         this.activateProducer = activateProducer;
     }
 
@@ -83,6 +86,11 @@ public class AuthService extends ServiceManager<Auth, Long> {
         if (authRepository.findOptionalByEmail(dto.getEmail()).isPresent()){
             throw new AuthManagerException(ErrorType.EMAIL_DUPLICATE);
         }
+        CheckCompanyRequestDto checkCompanyRequestDto = CheckCompanyRequestDto.builder()
+                .name(auth.getCompanyName())
+                .taxNumber(auth.getTaxNo())
+                .build();
+        companyManager.checkCompany(checkCompanyRequestDto);
         if (auth.getPassword().equals(dto.getPasswordConfirm())){
             authRepository.save(auth);
             userRegisterProducer.sendNewUser(IAuthMapper.INSTANCE.fromAuthToUserRegisterModel(auth));

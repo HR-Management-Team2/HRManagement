@@ -2,6 +2,7 @@ package com.hrmanagement.repository;
 
 import com.hrmanagement.dto.response.ManagerListResponseDto;
 import com.hrmanagement.repository.entity.User;
+import com.hrmanagement.repository.enums.ERole;
 import com.hrmanagement.repository.enums.EStatus;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -22,5 +23,5 @@ public interface IUserRepository extends MongoRepository<User,String> {
 
     List<User> findAllByTaxNo(String taxNo);
 
-    List<User> findAllByStatusNot(EStatus status);
+    List<User> findAllByStatusNotAndRole(EStatus status, ERole role);
 }

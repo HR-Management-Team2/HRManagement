@@ -11,4 +11,5 @@ public class RestApis {
     public static final String FINDALL = "/findall";
     public static final String FINDBYID = "/findbyid";
     public static final String ADDCOMPANY = "/addcompany";
+    public static final String CHECKCOMPANY = "/check-company";
 }
