@@ -1,0 +1,28 @@
+apiVersion: apps/v1  
+kind: Deployment 
+metadata: 
+  name: deploymentpostgresql
+spec: 
+  selector:
+    matchLabels: 
+      app: deployment-pod-label-postgresql 
+  template:
+    metadata:
+      labels:
+        app: deployment-pod-label-postgresql
+    spec:
+      containers:
+      - name: postgresql 
+        image: postgres 
+        resources:
+          requests: 
+            cpu: "300m" 
+            memory: "1024Mi" 
+          limits: 
+            cpu: "500m"
+            memory: "2048Mi"
+        ports: 
+        - containerPort: 5432
+        env:
+          - name: POSTGRES_PASSWORD 
+            value: root   

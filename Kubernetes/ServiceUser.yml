@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer-user-export-ip
+spec:
+  selector: 
+    app: deployment-pod-label-user
+  type: LoadBalancer
+  ports:
+    - name: userport
+      port: 8090
+      targetPort: 8090

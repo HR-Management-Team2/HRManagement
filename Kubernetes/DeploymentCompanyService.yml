@@ -1,0 +1,28 @@
+apiVersion: apps/v1  
+kind: Deployment
+metadata: 
+  name: deployment-company
+spec: 
+  selector:
+    matchLabels: 
+      app: deployment-pod-label-company
+  template:
+    metadata:
+      labels:
+        app: deployment-pod-label-company
+    spec:
+      containers: 
+      - name: company 
+        image: hivda/companyservicehrm:v02
+        resources: 
+          requests: 
+            cpu: "300m"
+            memory: "1024Mi"
+          limits:
+            cpu: "500m"
+            memory: "2048Mi"
+        ports: 
+        - containerPort: 9080
+        env:
+          - name: CONFIG_SERVER_URL 
+            value: http://10.116.4.41:8888
