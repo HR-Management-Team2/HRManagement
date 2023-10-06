@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer-company-export-ip
+spec:
+  selector: 
+    app: deployment-pod-label-company
+  type: ClusterIP
+  ports:
+    - name: companyport
+      port: 9080
+      targetPort: 9080

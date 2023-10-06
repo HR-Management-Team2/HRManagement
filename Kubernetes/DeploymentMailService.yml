@@ -1,0 +1,30 @@
+apiVersion: apps/v1  
+kind: Deployment
+metadata: 
+  name: deployment-mail
+spec: 
+  selector:
+    matchLabels: 
+      app: deployment-pod-label-mail
+  template:
+    metadata:
+      labels:
+        app: deployment-pod-label-mail
+    spec:
+      containers: 
+      - name: mail 
+        image: hivda/mailservicehrm:v03
+        resources: 
+          requests: 
+            cpu: "300m"
+            memory: "1024Mi"
+          limits:
+            cpu: "500m"
+            memory: "2048Mi"
+        ports: 
+        - containerPort: 8085
+        env:
+          - name: CONFIG_SERVER_URL
+            value: http://10.116.4.41:8888
+          - name: emailpassword
+            value: "ymyghpkzqjogctcv"

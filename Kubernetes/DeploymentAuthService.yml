@@ -1,0 +1,28 @@
+apiVersion: apps/v1  
+kind: Deployment
+metadata: 
+  name: deployment-auth
+spec: 
+  selector:
+    matchLabels: 
+      app: deployment-pod-label-auth
+  template:
+    metadata:
+      labels:
+        app: deployment-pod-label-auth
+    spec:
+      containers: 
+      - name: auth 
+        image: hivda/authservicehrm:v04
+        resources: 
+          requests: 
+            cpu: "300m"
+            memory: "1024Mi"
+          limits:
+            cpu: "500m"
+            memory: "2048Mi"
+        ports: 
+        - containerPort: 8080
+        env:
+          - name: CONFIG_SERVER_URL 
+            value: http://10.116.4.41:8888

@@ -1,0 +1,26 @@
+apiVersion: apps/v1  
+kind: Deployment
+metadata: 
+  name: deployment-react
+spec: 
+  selector:
+    matchLabels: 
+      app: deployment-pod-label-react
+  template:
+    metadata:
+      labels:
+        app: deployment-pod-label-react
+    spec:
+      containers: 
+      - name: react 
+        image: hivda/react:v07
+        resources: 
+          requests: 
+            cpu: "300m"
+            memory: "1024Mi"
+          limits:
+            cpu: "500m"
+            memory: "2048Mi"
+        ports: 
+        - containerPort: 80
+        - containerPort: 3000

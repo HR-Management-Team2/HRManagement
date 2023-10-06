@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer-apigateway-export-ip
+spec:
+  selector: 
+    app: deployment-pod-label-apigateway
+  type: LoadBalancer
+  ports:
+    - name: apigatewayport
+      port: 80
+      targetPort: 80

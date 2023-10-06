@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer-postgre-export-ip
+spec:
+  selector: 
+    app: deployment-pod-label-postgresql
+  type: ClusterIP
+  ports:
+    - name: postgreport
+      port: 5432
+      targetPort: 5432

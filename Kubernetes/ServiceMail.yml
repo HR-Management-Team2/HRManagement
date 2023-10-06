@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer-mail-export-ip
+spec:
+  selector: 
+    app: deployment-pod-label-mail
+  type: ClusterIP
+  ports:
+    - name: mailport
+      port: 8085
+      targetPort: 8085
