@@ -4,7 +4,7 @@
 This project is a Human Resources Management system designed to streamline HR processes for companies. With this web-based application, organizations can efficiently record and manage employees and managers, enabling various HR-related tasks and operations.
 
 ## Project Architecture
-<img src="\HRManagement\kubernetes.png">
+<img src="\kubernetes.png">
 
 ## Requirements & Usages
 - JDK 17 & IDEs
